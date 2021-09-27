@@ -5,7 +5,7 @@ import { CustomServiceException } from './common/exception/custom-service-except
 @Controller()
 export class AppController {
   constructor(private readonly appService: AppService) {}
-  @Get('')
+  @Get('/')
   getHello() {
     return this.appService.getHello();
   }

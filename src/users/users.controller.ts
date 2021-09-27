@@ -34,8 +34,6 @@ export class UsersController {
   @ApiOkResponse({
     type: MessageResponse,
   })
-  @Roles(Role.CUSTOMER)
-  @UseGuards(JwtAuthGuard, RolesGuard)
   @Get('')
   async getAllUsers(): Promise<MessageResponse<UserDto[]>> {
     return await this.userService.getUsers();
