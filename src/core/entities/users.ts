@@ -31,7 +31,7 @@ export class User {
   @Column()
   passwordTries: number;
 
-  @Column()
+  @Column({ nullable: true })
   refreshToken: string;
 
   @Column({
