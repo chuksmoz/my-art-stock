@@ -31,7 +31,7 @@ dotenv.config();
         migrationsDir: 'src/migration',
       },
 
-      //ssl: this.isProduction(),
+      ssl: true,
       logging: true,
       synchronize: true,
     }),
