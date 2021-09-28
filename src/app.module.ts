@@ -11,12 +11,31 @@ import { ProductModule } from './product/product.module';
 import { OrderModule } from './order/order.module';
 import { CartModule } from './cart/cart.module';
 import { CategoryModule } from './category/category.module';
+import * as dotenv from 'dotenv';
+dotenv.config();
 
 @Module({
   imports: [
     AuthModule,
     UsersModule,
-    TypeOrmModule.forRoot(configService.getTypeOrmConfig()),
+    TypeOrmModule.forRoot({
+      type: 'postgres',
+      url: process.env.DATABASE_URL,
+      entities: ['dist/core/entities/*.js'],
+
+      migrationsTableName: 'migration',
+
+      migrations: ['src/migration/*.ts'],
+
+      cli: {
+        migrationsDir: 'src/migration',
+      },
+
+      //ssl: true,
+      ssl: { rejectUnauthorized: false },
+      logging: true,
+      synchronize: true,
+    }),
     AutomapperModule.withMapper(),
     ProductModule,
     OrderModule,
