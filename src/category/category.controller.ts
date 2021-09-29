@@ -66,13 +66,10 @@ export class CategoryController {
     }
   }
 
-  @Get(':categoryId/SubCategory')
-  async GetAllSubCategory(
-    @Param('categoryId') categoryId: number,
-    @Body() createSubCategoryDto: CreateSubCategoryDto,
-  ) {
+  @Get(':categoryId/subCategory')
+  async GetAllSubCategory(@Param('categoryId') categoryId: number) {
     try {
-      return await this.categoryService.addSubCategory(createSubCategoryDto);
+      return await this.categoryService.getAllSubCategory();
     } catch (error) {
       throw new HttpException(
         { status: false, message: error.message },
