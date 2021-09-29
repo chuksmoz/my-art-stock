@@ -18,7 +18,7 @@ import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import EncryptionHelperService from '../core/utils/EncryptionHelperService';
 import { MessageResponse } from '../core/Dtos/message-response';
-import { AuthDto } from '../core/Dtos/authDtos/auth-dto';
+import { AuthDto, CreateUserResponse } from '../core/Dtos/authDtos/auth-dto';
 
 @Injectable()
 export class UsersService {
@@ -49,7 +49,8 @@ export class UsersService {
   }
   async createUser(
     userRequest: CreateUserRequest,
-  ): Promise<MessageResponse<AuthDto | null>> {
+  ): Promise<CreateUserResponse> {
+    const createUserResponse = new CreateUserResponse();
     const authDto: AuthDto = new AuthDto();
     try {
       if (userRequest.password !== userRequest.confirmPassword)
@@ -57,12 +58,7 @@ export class UsersService {
 
       const existingUser = await this.findUserByEmail(userRequest.email);
       console.log(existingUser);
-      if (existingUser)
-        return customResponse.getResponse<AuthDto | null>(
-          false,
-          'email already exists',
-          null,
-        );
+      if (existingUser) throw new Error('email already exists');
       //const user = this.mapper.map(userRequest, Users, CreateUserRequest);
       const user: User = new User();
       user.firstName = userRequest.firstName;
@@ -77,18 +73,12 @@ export class UsersService {
       const res = await this.authService.login(savedUser);
       authDto.token = res.access_token;
       authDto.user = savedUser; //this.mapper.map(savedUser, UserDto, User);
-      return customResponse.getResponse<AuthDto | null>(
-        true,
-        'user created successfully',
-        authDto,
-      );
+      createUserResponse.message = 'user created successfully';
+      createUserResponse.data = authDto;
+      createUserResponse.status = true;
+      return createUserResponse;
     } catch (error) {
-      console.log(error);
-      return customResponse.getResponse<AuthDto>(
-        false,
-        'system glitch, contact system administrator',
-        null,
-      );
+      throw new Error('system glitch, contact system administrator');
     }
   }
 

@@ -38,7 +38,7 @@ export class ProductService {
   ): Promise<MessageResponse<Product>> {
     try {
       const product: Product = new Product();
-      product.image = addProductDto.image;
+      product.imageUrl = addProductDto.imageUrl;
       product.name = addProductDto.name;
       product.description = addProductDto.description;
       product.isActive = true;
@@ -114,7 +114,7 @@ export class ProductService {
     const product = await this.productRepository.findOne(id);
     if (!product)
       return customResponse.getResponse(false, 'Product not found', null);
-    product.image = updateProductDto.image;
+    product.imageUrl = updateProductDto.imageUrl;
     product.name = updateProductDto.name;
     product.description = updateProductDto.description;
     product.isActive = true;

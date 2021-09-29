@@ -19,13 +19,7 @@ export class CategoryService {
       where: { categoryName: creatCategoryDto.categoryName },
     });
     if (existingCategory) {
-      throw new HttpException(
-        {
-          status: false,
-          message: 'Category already exist',
-        },
-        HttpStatus.UNPROCESSABLE_ENTITY,
-      );
+      throw new Error('Category already exist');
     }
     const category = new Category();
     category.categoryName = creatCategoryDto.categoryName;
@@ -42,13 +36,7 @@ export class CategoryService {
       creatSubCategoryDto.categoryId,
     );
     if (existingCategory) {
-      throw new HttpException(
-        {
-          status: false,
-          message: 'Category not found',
-        },
-        HttpStatus.NOT_FOUND,
-      );
+      throw new Error('Category not found');
     }
     const existingSubCategory = await this.categoryRepository.findOne({
       where: {
@@ -57,13 +45,7 @@ export class CategoryService {
       },
     });
     if (existingSubCategory) {
-      throw new HttpException(
-        {
-          status: false,
-          message: 'Category already exist',
-        },
-        HttpStatus.UNPROCESSABLE_ENTITY,
-      );
+      throw new Error('Category already exist');
     }
     const category = new Category();
     category.categoryName = creatSubCategoryDto.subCategoryName;

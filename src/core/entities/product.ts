@@ -21,7 +21,7 @@ export class Product {
 
   @IsString()
   @Column()
-  image!: string;
+  imageUrl!: string;
 
   @IsBoolean()
   @Column()
@@ -33,6 +33,9 @@ export class Product {
 
   @Column()
   categoryId: number;
+
+  @Column('simple-array')
+  tags: string[];
 
   @IsDate()
   @Column()

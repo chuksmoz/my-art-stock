@@ -30,3 +30,12 @@ export class UserDto {
   @AutoMap()
   isDeleted: boolean;
 }
+
+export class GetUserResponse {
+  @ApiProperty()
+  status: boolean;
+  @ApiProperty()
+  message: string;
+  @ApiProperty({ type: [UserDto] })
+  data: UserDto[];
+}

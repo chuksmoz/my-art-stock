@@ -1,8 +1,9 @@
+import { CreateUserResponse } from './../core/Dtos/authDtos/auth-dto';
 import { JwtAuthGuard } from './../auth/jwt-auth.guard';
 import { Role } from './../core/enums/user-role';
 import { RolesGuard } from './../auth/roles-auth.guard';
 import { Roles } from './../core/utils/decorator/role-decorator';
-import { UserDto } from './../core/Dtos/userDtos/user-dto';
+import { UserDto, GetUserResponse } from './../core/Dtos/userDtos/user-dto';
 import { UsersService } from './users.service';
 import {
   Body,
@@ -26,17 +27,41 @@ import { MessageResponse } from '../core/Dtos/message-response';
 @Controller('api/v1/user')
 export class UsersController {
   constructor(private readonly userService: UsersService) {}
+
+  @ApiOkResponse({
+    type: CreateUserResponse,
+  })
   @Post('')
-  async createUser(@Body() request: CreateUserRequest) {
-    return await this.userService.createUser(request);
+  async createUser(
+    @Body() request: CreateUserRequest,
+  ): Promise<CreateUserResponse> {
+    try {
+      return await this.userService.createUser(request);
+    } catch (error) {
+      throw new HttpException(
+        {
+          status: false,
+          message: error.message,
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
   }
 
   @ApiOkResponse({
-    type: MessageResponse,
+    type: GetUserResponse,
   })
   @Get('')
-  async getAllUsers(): Promise<MessageResponse<UserDto[]>> {
-    return await this.userService.getUsers();
+  async getAllUsers() {
+    try {
+      return await this.userService.getUsers();
+    } catch (error) {
+      throw new HttpException(
+        { status: false, message: error.message },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
     /* return 
     if (response && response.status) {
       return res.status(HttpStatus.OK).send(response);
