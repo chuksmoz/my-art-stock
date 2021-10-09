@@ -11,6 +11,7 @@ import { ProductModule } from './product/product.module';
 import { OrderModule } from './order/order.module';
 import { CartModule } from './cart/cart.module';
 import { CategoryModule } from './category/category.module';
+import { RefreshTokenModule } from './refresh-token/refresh-token.module';
 import * as dotenv from 'dotenv';
 dotenv.config();
 
@@ -31,8 +32,8 @@ dotenv.config();
         migrationsDir: 'src/migration',
       },
 
-      //ssl: false,
-      ssl: { rejectUnauthorized: false },
+      ssl: false,
+      //ssl: { rejectUnauthorized: false },
       logging: true,
       synchronize: true,
     }),
@@ -41,6 +42,7 @@ dotenv.config();
     OrderModule,
     CartModule,
     CategoryModule,
+    RefreshTokenModule,
   ],
   controllers: [AppController],
   providers: [AppService],

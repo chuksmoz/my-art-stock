@@ -1,5 +1,7 @@
 import { AutoMap } from '@nartc/automapper';
 import { ApiProperty } from '@nestjs/swagger';
+import { IsNotEmpty } from 'class-validator';
+import { BaseResponse } from '../base-response';
 
 export class UserDto {
   @ApiProperty()
@@ -31,11 +33,24 @@ export class UserDto {
   isDeleted: boolean;
 }
 
-export class GetUserResponse {
-  @ApiProperty()
-  status: boolean;
-  @ApiProperty()
-  message: string;
+export class GetUsersResponse extends BaseResponse {
   @ApiProperty({ type: [UserDto] })
   data: UserDto[];
+}
+
+export class GetSingleUserResponse extends BaseResponse {
+  @ApiProperty({ type: UserDto })
+  data: UserDto;
+}
+
+export class UpdateUserRequest {
+  @AutoMap()
+  @ApiProperty()
+  @IsNotEmpty()
+  firstName: string;
+
+  @AutoMap()
+  @ApiProperty()
+  @IsNotEmpty()
+  lastName: string;
 }

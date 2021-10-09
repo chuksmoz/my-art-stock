@@ -1,3 +1,4 @@
+import { UserDto } from './userDtos/user-dto';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class BaseMessageResponse {
@@ -5,6 +6,10 @@ export class BaseMessageResponse {
   public status: boolean;
   @ApiProperty()
   public message: string;
+}
+
+export class createUserDto extends BaseMessageResponse {
+  data: UserDto;
 }
 
 export class MessageResponse<T> extends BaseMessageResponse {

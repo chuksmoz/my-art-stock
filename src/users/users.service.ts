@@ -1,7 +1,17 @@
+import { BaseResponse } from './../core/Dtos/base-response';
+import { NOTFOUND } from './../core/utils/constant/exception-types';
+import { CustomException } from './../common/exception/custom-service-exception';
+import { AutoMapper } from '@nartc/automapper';
+import { InjectMapper } from 'nestjsx-automapper';
 import { USER_NOT_FOUND } from './../core/utils/constant/user-service.constant';
 import { ChangePasswordRequest } from './../core/model/user/change-password-request';
 import { CreateUserRequest } from '../core/Dtos/userDtos/create-user-request';
-import { UserDto } from './../core/Dtos/userDtos/user-dto';
+import {
+  GetSingleUserResponse,
+  GetUsersResponse,
+  UpdateUserRequest,
+  UserDto,
+} from './../core/Dtos/userDtos/user-dto';
 import { AuthService } from './../auth/auth.service';
 import {
   BaseMessageResponse,
@@ -17,8 +27,8 @@ import {
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import EncryptionHelperService from '../core/utils/EncryptionHelperService';
-import { MessageResponse } from '../core/Dtos/message-response';
 import { AuthDto, CreateUserResponse } from '../core/Dtos/authDtos/auth-dto';
+import { Role } from 'src/core/enums/user-role';
 
 @Injectable()
 export class UsersService {
@@ -28,24 +38,31 @@ export class UsersService {
     private encryptor: EncryptionHelperService,
     @Inject(forwardRef(() => AuthService))
     private authService: AuthService,
+    @InjectMapper() private readonly mapper: AutoMapper,
   ) {}
 
   async findUserByEmail(email: string): Promise<User | undefined> {
     return await this._userRepository.findOne({ email: email });
   }
-  async getUserById(userId: number): Promise<MessageResponse<UserDto>> {
+  async getUserById(userId: number): Promise<GetSingleUserResponse> {
+    const response = new GetSingleUserResponse();
     const user = await this._userRepository.findOne(userId);
-    if (user) {
-      //const userVm = this.mapper.map(user, UserDto, User);
-      return customResponse.getResponse<UserDto>(true, 'success', user);
+    if (!user) {
+      throw new CustomException(USER_NOT_FOUND, NOTFOUND);
     }
-    return customResponse.getResponse<UserDto>(false, 'User not found', null);
+    response.message = 'User fetched successfully';
+    response.status = true;
+    response.data = this.mapper.map(user, UserDto, User);
+    return response;
   }
 
-  async getUsers(): Promise<MessageResponse<UserDto[]>> {
+  async getUsers(): Promise<GetUsersResponse> {
+    const response = new GetUsersResponse();
     const users = await this._userRepository.find();
-    //const userVm = this.mapper.mapArray(users, UserDto, User);
-    return customResponse.getResponse<UserDto[]>(true, 'success', users);
+    response.status = true;
+    response.message = 'UserS fetched successfully';
+    response.data = this.mapper.mapArray(users, UserDto, User);
+    return response;
   }
   async createUser(
     userRequest: CreateUserRequest,
@@ -69,6 +86,42 @@ export class UsersService {
       user.isDeleted = false;
       user.isActive = true;
       user.passwordTries = 0;
+      const savedUser = await this._userRepository.save(user);
+      const res = await this.authService.login(savedUser);
+      authDto.token = res.access_token;
+      authDto.user = savedUser; //this.mapper.map(savedUser, UserDto, User);
+      createUserResponse.message = 'user created successfully';
+      createUserResponse.data = authDto;
+      createUserResponse.status = true;
+      return createUserResponse;
+    } catch (error) {
+      throw new Error('system glitch, contact system administrator');
+    }
+  }
+
+  async createContributor(
+    userRequest: CreateUserRequest,
+  ): Promise<CreateUserResponse> {
+    const createUserResponse = new CreateUserResponse();
+    const authDto: AuthDto = new AuthDto();
+    try {
+      if (userRequest.password !== userRequest.confirmPassword)
+        throw new BadRequestException('password does not match');
+
+      const existingUser = await this.findUserByEmail(userRequest.email);
+      console.log(existingUser);
+      if (existingUser) throw new Error('email already exists');
+      //const user = this.mapper.map(userRequest, Users, CreateUserRequest);
+      const user: User = new User();
+      user.firstName = userRequest.firstName;
+      user.lastName = userRequest.lastName;
+      user.email = userRequest.email;
+      user.password = await this.encryptor.encrypt(userRequest.password);
+      user.modifiedDate = new Date();
+      user.isDeleted = false;
+      user.isActive = true;
+      user.passwordTries = 0;
+      user.role = Role.CONTRIBUTOR;
       const savedUser = await this._userRepository.save(user);
       const res = await this.authService.login(savedUser);
       authDto.token = res.access_token;
@@ -121,16 +174,46 @@ export class UsersService {
     }
   }
 
-  async updateUser(id: number, user: User): Promise<void> {
+  async updateUser(
+    id: number,
+    payload: UpdateUserRequest,
+  ): Promise<GetSingleUserResponse> {
+    const response = new GetSingleUserResponse();
     const existingUser = await this._userRepository.findOne(id);
     if (!existingUser) {
-      throw new Error(USER_NOT_FOUND);
+      throw new CustomException(USER_NOT_FOUND, NOTFOUND);
     }
+    existingUser.firstName = payload.firstName;
+    existingUser.lastName = payload.lastName;
     await this._userRepository
       .createQueryBuilder()
       .update()
-      .set(user)
+      .set(existingUser)
       .where('id= :id', { id: id })
       .execute();
+
+    response.message = 'User updated successfully';
+    response.status = true;
+    response.data = this.mapper.map(existingUser, UserDto, User);
+    return response;
+  }
+
+  async deleteUser(id: number): Promise<BaseResponse> {
+    const response = new BaseResponse();
+    const existingUser = await this._userRepository.findOne(id);
+    if (!existingUser) {
+      throw new CustomException(USER_NOT_FOUND, NOTFOUND);
+    }
+    existingUser.isDeleted = true;
+    await this._userRepository
+      .createQueryBuilder()
+      .update()
+      .set(existingUser)
+      .where('id= :id', { id: id })
+      .execute();
+
+    response.message = 'User deleted successfully';
+    response.status = true;
+    return response;
   }
 }

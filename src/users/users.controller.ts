@@ -1,9 +1,11 @@
+import { BaseResponse } from './../core/Dtos/base-response';
 import { CreateUserResponse } from './../core/Dtos/authDtos/auth-dto';
 import { JwtAuthGuard } from './../auth/jwt-auth.guard';
-import { Role } from './../core/enums/user-role';
-import { RolesGuard } from './../auth/roles-auth.guard';
-import { Roles } from './../core/utils/decorator/role-decorator';
-import { UserDto, GetUserResponse } from './../core/Dtos/userDtos/user-dto';
+import {
+  GetSingleUserResponse,
+  GetUsersResponse,
+  UpdateUserRequest,
+} from './../core/Dtos/userDtos/user-dto';
 import { UsersService } from './users.service';
 import {
   Body,
@@ -15,22 +17,27 @@ import {
   Param,
   Req,
   UseGuards,
-  HttpException,
+  Put,
+  Delete,
 } from '@nestjs/common';
 import { CreateUserRequest } from '../core/Dtos/userDtos/create-user-request';
-import { Response } from 'express';
 import { ChangePasswordRequest } from '../core/model/user/change-password-request';
-import { ApiTags, ApiOkResponse } from '@nestjs/swagger';
-import { MessageResponse } from '../core/Dtos/message-response';
+import {
+  ApiTags,
+  ApiOkResponse,
+  ApiBadRequestResponse,
+  ApiNotFoundResponse,
+} from '@nestjs/swagger';
+import { throwError } from './../common/exception/custom-service-exception';
 
 @ApiTags('user')
 @Controller('api/v1/user')
 export class UsersController {
   constructor(private readonly userService: UsersService) {}
 
-  @ApiOkResponse({
-    type: CreateUserResponse,
-  })
+  @ApiOkResponse({ type: CreateUserResponse })
+  @ApiBadRequestResponse({ type: BaseResponse })
+  @ApiNotFoundResponse({ type: BaseResponse })
   @Post('')
   async createUser(
     @Body() request: CreateUserRequest,
@@ -38,44 +45,72 @@ export class UsersController {
     try {
       return await this.userService.createUser(request);
     } catch (error) {
-      throw new HttpException(
-        {
-          status: false,
-          message: error.message,
-        },
-        HttpStatus.BAD_REQUEST,
-      );
+      throwError(error);
     }
   }
 
-  @ApiOkResponse({
-    type: GetUserResponse,
-  })
+  @ApiOkResponse({ type: CreateUserResponse })
+  @ApiBadRequestResponse({ type: BaseResponse })
+  @ApiNotFoundResponse({ type: BaseResponse })
+  @Post('/createContributor')
+  async createContributor(
+    @Body() request: CreateUserRequest,
+  ): Promise<CreateUserResponse> {
+    try {
+      return await this.userService.createContributor(request);
+    } catch (error) {
+      throwError(error);
+    }
+  }
+
+  @ApiOkResponse({ type: GetUsersResponse })
+  @ApiBadRequestResponse({ type: BaseResponse })
+  @ApiNotFoundResponse({ type: BaseResponse })
   @Get('')
   async getAllUsers() {
     try {
       return await this.userService.getUsers();
     } catch (error) {
-      throw new HttpException(
-        { status: false, message: error.message },
-        HttpStatus.BAD_REQUEST,
-      );
+      throwError(error);
     }
-
-    /* return 
-    if (response && response.status) {
-      return res.status(HttpStatus.OK).send(response);
+  }
+  @ApiOkResponse({ type: GetSingleUserResponse })
+  @ApiBadRequestResponse({ type: BaseResponse })
+  @ApiNotFoundResponse({ type: BaseResponse })
+  @Get(':id')
+  async getUserById(@Param('id') id: number) {
+    try {
+      return await this.userService.getUserById(id);
+    } catch (error) {
+      throwError(error);
     }
-    return res.status(HttpStatus.BAD_REQUEST).send(response); */
   }
 
-  @Get(':id')
-  async getUserById(@Param('id') id: number, @Res() res: Response) {
-    const response = await this.userService.getUserById(id);
-    if (response && response.status) {
-      return res.status(HttpStatus.OK).send(response);
+  @ApiOkResponse({ type: GetSingleUserResponse })
+  @ApiBadRequestResponse({ type: BaseResponse })
+  @ApiNotFoundResponse({ type: BaseResponse })
+  @Put(':id')
+  async updateUser(
+    @Param('id') id: number,
+    @Body() payload: UpdateUserRequest,
+  ) {
+    try {
+      return await this.userService.updateUser(id, payload);
+    } catch (error) {
+      throwError(error);
     }
-    return res.status(HttpStatus.BAD_REQUEST).send(response);
+  }
+
+  @ApiOkResponse({ type: GetSingleUserResponse })
+  @ApiBadRequestResponse({ type: BaseResponse })
+  @ApiNotFoundResponse({ type: BaseResponse })
+  @Delete(':id')
+  async deleteUser(@Param('id') id: number) {
+    try {
+      return await this.userService.deleteUser(id);
+    } catch (error) {
+      throwError(error);
+    }
   }
 
   @UseGuards(JwtAuthGuard)

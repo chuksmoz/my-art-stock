@@ -1,11 +1,33 @@
-export class CustomServiceException extends Error {
-  private _code: number;
-  constructor(message: string, code: number) {
-    super(message);
-    this._code = code;
-  }
+import { HttpException, HttpStatus } from '@nestjs/common';
+import {
+  BADREQUEST,
+  NOTFOUND,
+  UNAUTHORIZED,
+} from 'src/core/utils/constant/exception-types';
 
-  get Code() {
-    return this._code;
+export class CustomException extends Error {
+  constructor(message, name) {
+    super(message);
+    this.name = name;
+  }
+}
+
+export function throwError(error: any) {
+  if (error instanceof CustomException) {
+    if (error.name == NOTFOUND)
+      throw new HttpException(
+        { status: false, message: error.message },
+        HttpStatus.NOT_FOUND,
+      );
+    else if (error.name == BADREQUEST)
+      throw new HttpException(
+        { status: false, message: error.message },
+        HttpStatus.BAD_REQUEST,
+      );
+    else if (error.name == UNAUTHORIZED)
+      throw new HttpException(
+        { status: false, message: error.message },
+        HttpStatus.BAD_REQUEST,
+      );
   }
 }

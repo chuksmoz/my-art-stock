@@ -1,3 +1,5 @@
+import { BADREQUEST } from './../core/utils/constant/exception-types';
+import { CustomException } from './../common/exception/custom-service-exception';
 import {
   INVALID_CREDENTIAL,
   USER_LOCK,
@@ -21,7 +23,7 @@ export class AuthService {
     console.log(email);
     const user = await this.usersService.findUserByEmail(email);
     if (!user) {
-      throw new Error(INVALID_CREDENTIAL);
+      throw new CustomException(INVALID_CREDENTIAL, BADREQUEST);
     }
     const isValidPassword = await this.encryptor.validatePassword(
       password,

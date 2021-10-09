@@ -50,6 +50,7 @@ class ConfigService {
       },
 
       //ssl: { rejectUnauthorized: false },
+      //ssl: this.isProduction(),
       ssl: this.isProduction(),
       logging: true,
       synchronize: true,
