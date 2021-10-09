@@ -7,17 +7,25 @@ export class CreateUserRequest {
   @ApiProperty()
   @IsNotEmpty()
   firstName: string;
+
   @AutoMap()
   @ApiProperty()
   @IsNotEmpty()
   lastName: string;
+
   @AutoMap()
   @ApiProperty()
   @IsEmail()
   email: string;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  profileImageUrl: string;
+
   @ApiProperty()
   @IsNotEmpty()
   password: string;
+
   @ApiProperty()
   @IsNotEmpty()
   confirmPassword: string;

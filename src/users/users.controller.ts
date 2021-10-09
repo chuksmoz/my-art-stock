@@ -101,7 +101,7 @@ export class UsersController {
     }
   }
 
-  @ApiOkResponse({ type: GetSingleUserResponse })
+  @ApiOkResponse({ type: BaseResponse })
   @ApiBadRequestResponse({ type: BaseResponse })
   @ApiNotFoundResponse({ type: BaseResponse })
   @Delete(':id')

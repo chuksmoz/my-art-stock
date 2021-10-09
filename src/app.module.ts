@@ -32,8 +32,8 @@ dotenv.config();
         migrationsDir: 'src/migration',
       },
 
-      ssl: false,
-      //ssl: { rejectUnauthorized: false },
+      //ssl: false,
+      ssl: { rejectUnauthorized: false },
       logging: true,
       synchronize: true,
     }),

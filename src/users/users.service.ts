@@ -64,24 +64,23 @@ export class UsersService {
     response.data = this.mapper.mapArray(users, UserDto, User);
     return response;
   }
-  async createUser(
-    userRequest: CreateUserRequest,
-  ): Promise<CreateUserResponse> {
+  async createUser(payload: CreateUserRequest): Promise<CreateUserResponse> {
     const createUserResponse = new CreateUserResponse();
     const authDto: AuthDto = new AuthDto();
     try {
-      if (userRequest.password !== userRequest.confirmPassword)
+      if (payload.password !== payload.confirmPassword)
         throw new BadRequestException('password does not match');
 
-      const existingUser = await this.findUserByEmail(userRequest.email);
+      const existingUser = await this.findUserByEmail(payload.email);
       console.log(existingUser);
       if (existingUser) throw new Error('email already exists');
-      //const user = this.mapper.map(userRequest, Users, CreateUserRequest);
+      //const user = this.mapper.map(payload, Users, Createpayload);
       const user: User = new User();
-      user.firstName = userRequest.firstName;
-      user.lastName = userRequest.lastName;
-      user.email = userRequest.email;
-      user.password = await this.encryptor.encrypt(userRequest.password);
+      user.firstName = payload.firstName;
+      user.lastName = payload.lastName;
+      user.email = payload.email;
+      user.profileImageUrl = payload.profileImageUrl;
+      user.password = await this.encryptor.encrypt(payload.password);
       user.modifiedDate = new Date();
       user.isDeleted = false;
       user.isActive = true;
@@ -100,23 +99,24 @@ export class UsersService {
   }
 
   async createContributor(
-    userRequest: CreateUserRequest,
+    payload: CreateUserRequest,
   ): Promise<CreateUserResponse> {
     const createUserResponse = new CreateUserResponse();
     const authDto: AuthDto = new AuthDto();
     try {
-      if (userRequest.password !== userRequest.confirmPassword)
+      if (payload.password !== payload.confirmPassword)
         throw new BadRequestException('password does not match');
 
-      const existingUser = await this.findUserByEmail(userRequest.email);
+      const existingUser = await this.findUserByEmail(payload.email);
       console.log(existingUser);
       if (existingUser) throw new Error('email already exists');
-      //const user = this.mapper.map(userRequest, Users, CreateUserRequest);
+      //const user = this.mapper.map(payload, Users, Createpayload);
       const user: User = new User();
-      user.firstName = userRequest.firstName;
-      user.lastName = userRequest.lastName;
-      user.email = userRequest.email;
-      user.password = await this.encryptor.encrypt(userRequest.password);
+      user.firstName = payload.firstName;
+      user.lastName = payload.lastName;
+      user.email = payload.email;
+      user.profileImageUrl = payload.profileImageUrl;
+      user.password = await this.encryptor.encrypt(payload.password);
       user.modifiedDate = new Date();
       user.isDeleted = false;
       user.isActive = true;

@@ -25,6 +25,10 @@ export class User {
   @AutoMap()
   email: string;
 
+  @AutoMap()
+  @Column({ nullable: true })
+  profileImageUrl: string;
+
   @Column()
   password: string;
 

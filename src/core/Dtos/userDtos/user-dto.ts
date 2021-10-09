@@ -22,6 +22,10 @@ export class UserDto {
 
   @ApiProperty()
   @AutoMap()
+  profileImageUrl: string;
+
+  @ApiProperty()
+  @AutoMap()
   createdDate: Date;
 
   @ApiProperty()
@@ -31,6 +35,9 @@ export class UserDto {
   @ApiProperty()
   @AutoMap()
   isDeleted: boolean;
+  @ApiProperty()
+  @AutoMap()
+  lastLoginDate: Date;
 }
 
 export class GetUsersResponse extends BaseResponse {
