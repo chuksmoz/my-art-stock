@@ -1,4 +1,3 @@
-import { AuthService } from './auth/auth.service';
 import { AutomapperModule } from 'nestjsx-automapper';
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
@@ -32,8 +31,8 @@ dotenv.config();
         migrationsDir: 'src/migration',
       },
 
-      //ssl: false,
-      ssl: { rejectUnauthorized: false },
+      ssl: false,
+      //ssl: { rejectUnauthorized: false },
       logging: true,
       synchronize: true,
     }),

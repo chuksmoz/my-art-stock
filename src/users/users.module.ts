@@ -6,7 +6,7 @@ import EncryptionHelperService from '../core/utils/EncryptionHelperService';
 import { UsersService } from './users.service';
 import { JwtModule } from '@nestjs/jwt';
 import { UsersController } from './users.controller';
-import '../core/profiles/user-profile';
+import '../core/profiles/user.profile';
 
 @Module({
   imports: [

@@ -1,34 +1,49 @@
+import { SubCategoriesResponse } from './../core/Dtos/categoryDto/category-response.dto';
+import {
+  CategoryDto,
+  SubCategoryDto,
+} from './../core/Dtos/categoryDto/category.dto';
 import { Category } from './../core/entities/category';
-import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import {
   CreateCategoryDto,
   CreateSubCategoryDto,
-} from 'src/core/Dtos/category/create-category-dto';
-import { Repository } from 'typeorm';
+} from 'src/core/Dtos/categoryDto/create-request.dto';
+import { IsNull, Repository } from 'typeorm';
+import {
+  CategoriesResponse,
+  CategoryResponse,
+} from 'src/core/Dtos/categoryDto/category-response.dto';
+import { AutoMapper } from '@nartc/automapper';
+import { InjectMapper } from 'nestjsx-automapper';
 
 @Injectable()
 export class CategoryService {
   constructor(
     @InjectRepository(Category)
     private readonly categoryRepository: Repository<Category>,
+    @InjectMapper() private readonly mapper: AutoMapper,
   ) {}
 
-  async addCategory(creatCategoryDto: CreateCategoryDto) {
+  async addCategory(payload: CreateCategoryDto): Promise<CategoryResponse> {
+    const response = new CategoryResponse();
     const existingCategory = await this.categoryRepository.findOne({
-      where: { categoryName: creatCategoryDto.categoryName },
+      where: { categoryName: payload.categoryName },
     });
     if (existingCategory) {
       throw new Error('Category already exist');
     }
     const category = new Category();
-    category.categoryName = creatCategoryDto.categoryName;
+    category.categoryName = payload.categoryName;
+    category.isActive = true;
     const newCategory = await this.categoryRepository.save(category);
-    return {
-      status: true,
-      message: 'Category added successfully',
-      data: newCategory,
-    };
+    const categoryDto = this.mapper.map(newCategory, CategoryDto, Category);
+
+    response.status = true;
+    response.message = 'Category added successfully';
+    response.data = categoryDto;
+    return response;
   }
 
   async addSubCategory(creatSubCategoryDto: CreateSubCategoryDto) {
@@ -58,27 +73,41 @@ export class CategoryService {
     };
   }
 
-  async getAllCategory() {
-    const category = await this.categoryRepository.find({
-      where: { parentId: null },
-    });
-    return {
-      status: true,
-      message: 'Category fetch successfully',
-      data: category,
-    };
+  async getAllCategory(): Promise<CategoriesResponse> {
+    const response = new CategoriesResponse();
+    try {
+      const categories = await this.categoryRepository.find({
+        where: { categoryId: IsNull() },
+      });
+
+      const categoriesDto = this.mapper.mapArray(
+        categories,
+        CategoryDto,
+        Category,
+      );
+      response.message = 'Categories fetched successfully';
+      response.status = true;
+      response.data = categoriesDto;
+      return response;
+    } catch (error) {
+      console.log(error);
+    }
   }
 
-  async getAllSubCategory() {
-    const category = await this.categoryRepository
-      .createQueryBuilder()
-      .leftJoinAndSelect('category.categoryId', 'category')
-      .getMany();
+  async getAllSubCategory(categoryId: number): Promise<SubCategoriesResponse> {
+    const response = new SubCategoriesResponse();
+    const category = await this.categoryRepository.find({
+      where: { categoryId: categoryId },
+    });
 
-    return {
-      status: true,
-      message: 'Category fetch successfully',
-      data: category,
-    };
+    const categoryDto = this.mapper.mapArray(
+      category,
+      SubCategoryDto,
+      Category,
+    );
+    response.status = true;
+    response.message = 'Category fetch successfully';
+    response.data = categoryDto;
+    return response;
   }
 }

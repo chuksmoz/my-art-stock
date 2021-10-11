@@ -39,7 +39,7 @@ export class AuthController {
   }
 
   //@UseGuards(LocalAuthGuard)
-  @Get('/test')
+  /* @Get('/test')
   async test() {
     //const user = req.user;
     try {
@@ -53,5 +53,5 @@ export class AuthController {
         400,
       );
     }
-  }
+  } */
 }
