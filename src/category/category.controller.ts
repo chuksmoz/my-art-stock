@@ -23,6 +23,7 @@ import { BaseResponse } from 'src/core/Dtos/base-response';
 import {
   CategoriesResponse,
   SubCategoriesResponse,
+  SubCategoryResponse,
 } from 'src/core/Dtos/categoryDto/category-response.dto';
 
 @ApiTags('category')
@@ -61,22 +62,19 @@ export class CategoryController {
     try {
       return await this.categoryService.addCategory(createCategoryDto);
     } catch (error) {
-      throw new HttpException(
-        { status: false, message: error.message },
-        HttpStatus.BAD_REQUEST,
-      );
+      throwError(error);
     }
   }
 
+  @ApiOkResponse({ type: SubCategoryResponse })
+  @ApiBadRequestResponse({ type: BaseResponse })
+  @ApiNotFoundResponse({ type: BaseResponse })
   @Post('/createSubCategory')
   async CreateSubCategory(@Body() createSubCategoryDto: CreateSubCategoryDto) {
     try {
       return await this.categoryService.addSubCategory(createSubCategoryDto);
     } catch (error) {
-      throw new HttpException(
-        { status: false, message: error.message },
-        HttpStatus.BAD_REQUEST,
-      );
+      throwError(error);
     }
   }
 

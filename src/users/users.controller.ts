@@ -20,7 +20,10 @@ import {
   Put,
   Delete,
 } from '@nestjs/common';
-import { CreateUserRequest } from '../core/Dtos/userDtos/create-user-request';
+import {
+  CreateContributorRequest,
+  CreateUserRequest,
+} from '../core/Dtos/userDtos/create-user-request';
 import { ChangePasswordRequest } from '../core/model/user/change-password-request';
 import {
   ApiTags,
@@ -54,7 +57,7 @@ export class UsersController {
   @ApiNotFoundResponse({ type: BaseResponse })
   @Post('/createContributor')
   async createContributor(
-    @Body() request: CreateUserRequest,
+    @Body() request: CreateContributorRequest,
   ): Promise<CreateUserResponse> {
     try {
       return await this.userService.createContributor(request);

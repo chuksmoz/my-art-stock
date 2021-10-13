@@ -1,4 +1,9 @@
-import { SubCategoriesResponse } from './../core/Dtos/categoryDto/category-response.dto';
+import { NOTFOUND, BADREQUEST } from './../core/utils/constant/exception-types';
+import { CustomException } from './../common/exception/custom-service-exception';
+import {
+  SubCategoriesResponse,
+  SubCategoryResponse,
+} from './../core/Dtos/categoryDto/category-response.dto';
 import {
   CategoryDto,
   SubCategoryDto,
@@ -46,31 +51,42 @@ export class CategoryService {
     return response;
   }
 
-  async addSubCategory(creatSubCategoryDto: CreateSubCategoryDto) {
+  async addSubCategory(
+    payload: CreateSubCategoryDto,
+  ): Promise<SubCategoryResponse> {
+    const response = new SubCategoryResponse();
     const existingCategory = await this.categoryRepository.findOne(
-      creatSubCategoryDto.categoryId,
+      payload.categoryId,
     );
-    if (existingCategory) {
-      throw new Error('Category not found');
+    if (!existingCategory) {
+      throw new CustomException('Category not found', NOTFOUND);
     }
     const existingSubCategory = await this.categoryRepository.findOne({
       where: {
-        categoryName: creatSubCategoryDto.subCategoryName,
-        id: creatSubCategoryDto.categoryId,
+        categoryName: payload.subCategoryName,
+        id: payload.categoryId,
       },
     });
     if (existingSubCategory) {
-      throw new Error('Category already exist');
+      throw new CustomException('Category already exist', BADREQUEST);
     }
     const category = new Category();
-    category.categoryName = creatSubCategoryDto.subCategoryName;
-    category.categoryId = creatSubCategoryDto.categoryId;
-    const newCategory = await this.categoryRepository.save(category);
-    return {
-      status: true,
-      message: 'Sub Category added successfully',
-      data: newCategory,
-    };
+    category.categoryName = payload.subCategoryName;
+    category.categoryId = payload.categoryId;
+    category.isActive = true;
+    const newSubCategory = await this.categoryRepository.save(category);
+
+    const subCategoryDto = this.mapper.map(
+      newSubCategory,
+      SubCategoryDto,
+      Category,
+    );
+
+    response.status = true;
+    response.message = 'Sub Category added successfully';
+    response.data = subCategoryDto;
+
+    return response;
   }
 
   async getAllCategory(): Promise<CategoriesResponse> {

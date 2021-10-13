@@ -27,7 +27,23 @@ export class User {
 
   @AutoMap()
   @Column({ nullable: true })
+  phoneNumber: string;
+
+  @AutoMap()
+  @Column({ nullable: true })
   profileImageUrl: string;
+
+  @AutoMap()
+  @Column({ nullable: true })
+  countryId: number;
+
+  @AutoMap()
+  @Column({ nullable: true })
+  stateId: number;
+
+  @AutoMap()
+  @Column({ nullable: true })
+  city: string;
 
   @Column()
   password: string;

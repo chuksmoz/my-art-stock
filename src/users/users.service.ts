@@ -5,7 +5,10 @@ import { AutoMapper } from '@nartc/automapper';
 import { InjectMapper } from 'nestjsx-automapper';
 import { USER_NOT_FOUND } from './../core/utils/constant/user-service.constant';
 import { ChangePasswordRequest } from './../core/model/user/change-password-request';
-import { CreateUserRequest } from '../core/Dtos/userDtos/create-user-request';
+import {
+  CreateContributorRequest,
+  CreateUserRequest,
+} from '../core/Dtos/userDtos/create-user-request';
 import {
   GetSingleUserResponse,
   GetUsersResponse,
@@ -77,9 +80,6 @@ export class UsersService {
       //const user = this.mapper.map(payload, Users, Createpayload);
       const user: User = new User();
       user.firstName = payload.firstName;
-      user.lastName = payload.lastName;
-      user.email = payload.email;
-      user.profileImageUrl = payload.profileImageUrl;
       user.password = await this.encryptor.encrypt(payload.password);
       user.modifiedDate = new Date();
       user.isDeleted = false;
@@ -99,7 +99,7 @@ export class UsersService {
   }
 
   async createContributor(
-    payload: CreateUserRequest,
+    payload: CreateContributorRequest,
   ): Promise<CreateUserResponse> {
     const createUserResponse = new CreateUserResponse();
     const authDto: AuthDto = new AuthDto();
@@ -115,7 +115,10 @@ export class UsersService {
       user.firstName = payload.firstName;
       user.lastName = payload.lastName;
       user.email = payload.email;
-      user.profileImageUrl = payload.profileImageUrl;
+      user.phoneNumber = payload.phoneNumber;
+      user.countryId = payload.countryId;
+      user.stateId = payload.stateId;
+      user.city = payload.city;
       user.password = await this.encryptor.encrypt(payload.password);
       user.modifiedDate = new Date();
       user.isDeleted = false;
