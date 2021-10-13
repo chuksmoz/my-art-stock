@@ -80,6 +80,7 @@ export class UsersService {
       //const user = this.mapper.map(payload, Users, Createpayload);
       const user: User = new User();
       user.firstName = payload.firstName;
+      user.email = payload.email;
       user.password = await this.encryptor.encrypt(payload.password);
       user.modifiedDate = new Date();
       user.isDeleted = false;

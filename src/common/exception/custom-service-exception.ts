@@ -29,5 +29,10 @@ export function throwError(error: any) {
         { status: false, message: error.message },
         HttpStatus.BAD_REQUEST,
       );
+    else
+      throw new HttpException(
+        { status: false, message: error.message },
+        HttpStatus.NOT_FOUND,
+      );
   }
 }

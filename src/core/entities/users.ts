@@ -17,7 +17,7 @@ export class User {
   @Column({ length: 100 })
   firstName: string;
 
-  @Column({ length: 100 })
+  @Column({ length: 100, nullable: true })
   @AutoMap()
   lastName: string;
 
