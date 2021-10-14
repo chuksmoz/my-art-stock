@@ -89,7 +89,7 @@ export class UsersService {
       const savedUser = await this._userRepository.save(user);
       const res = await this.authService.login(savedUser);
       authDto.token = res.access_token;
-      authDto.user = savedUser; //this.mapper.map(savedUser, UserDto, User);
+      authDto.user = this.mapper.map(savedUser, UserDto, User);
       createUserResponse.message = 'user created successfully';
       createUserResponse.data = authDto;
       createUserResponse.status = true;
@@ -129,7 +129,7 @@ export class UsersService {
       const savedUser = await this._userRepository.save(user);
       const res = await this.authService.login(savedUser);
       authDto.token = res.access_token;
-      authDto.user = savedUser; //this.mapper.map(savedUser, UserDto, User);
+      authDto.user = this.mapper.map(savedUser, UserDto, User);
       createUserResponse.message = 'user created successfully';
       createUserResponse.data = authDto;
       createUserResponse.status = true;
