@@ -1,5 +1,5 @@
 import { BaseResponse } from './../core/Dtos/base-response';
-import { NOTFOUND } from './../core/utils/constant/exception-types';
+import { NOTFOUND, BADREQUEST } from './../core/utils/constant/exception-types';
 import { CustomException } from './../common/exception/custom-service-exception';
 import { AutoMapper } from '@nartc/automapper';
 import { InjectMapper } from 'nestjsx-automapper';
@@ -16,17 +16,8 @@ import {
   UserDto,
 } from './../core/Dtos/userDtos/user-dto';
 import { AuthService } from './../auth/auth.service';
-import {
-  BaseMessageResponse,
-  customResponse,
-} from './../core/Dtos/message-response';
 import { User } from './../core/entities/users';
-import {
-  BadRequestException,
-  forwardRef,
-  Inject,
-  Injectable,
-} from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import EncryptionHelperService from '../core/utils/EncryptionHelperService';
@@ -72,11 +63,12 @@ export class UsersService {
     const authDto: AuthDto = new AuthDto();
     try {
       if (payload.password !== payload.confirmPassword)
-        throw new BadRequestException('password does not match');
+        throw new CustomException('password does not match', NOTFOUND);
 
       const existingUser = await this.findUserByEmail(payload.email);
       console.log(existingUser);
-      if (existingUser) throw new Error('email already exists');
+      if (existingUser)
+        throw new CustomException('email already exists', BADREQUEST);
       //const user = this.mapper.map(payload, Users, Createpayload);
       const user: User = new User();
       user.firstName = payload.firstName;
@@ -106,11 +98,12 @@ export class UsersService {
     const authDto: AuthDto = new AuthDto();
     try {
       if (payload.password !== payload.confirmPassword)
-        throw new BadRequestException('password does not match');
+        throw new CustomException('password does not match', BADREQUEST);
 
       const existingUser = await this.findUserByEmail(payload.email);
       console.log(existingUser);
-      if (existingUser) throw new Error('email already exists');
+      if (existingUser)
+        throw new CustomException('email already exists', BADREQUEST);
       //const user = this.mapper.map(payload, Users, Createpayload);
       const user: User = new User();
       user.firstName = payload.firstName;
@@ -142,15 +135,16 @@ export class UsersService {
   async changePassword(
     userId: number,
     request: ChangePasswordRequest,
-  ): Promise<BaseMessageResponse> {
+  ): Promise<BaseResponse> {
+    const response = new BaseResponse();
     try {
       const user = await this._userRepository.findOne(userId);
       console.log(user);
       if (!user) {
-        return customResponse.getBaseResponse(false, 'User not found');
+        throw new CustomException('User not found', NOTFOUND);
       }
       if (request.newPassword !== request.confirmNewPassword) {
-        return customResponse.getBaseResponse(false, 'Password do not match');
+        throw new CustomException('Password do not match', BADREQUEST);
       }
       const isValidPassword = await this.encryptor.validatePassword(
         request.password,
@@ -158,11 +152,10 @@ export class UsersService {
       );
       console.log(isValidPassword);
       if (!isValidPassword) {
-        return customResponse.getBaseResponse(false, 'Invalid Password');
+        throw new CustomException('Invalid Password', BADREQUEST);
       }
       user.password = await this.encryptor.encrypt(request.newPassword);
       user.modifiedDate = new Date();
-      user.firstName = 'chuks';
       const res = await this._userRepository
         .createQueryBuilder()
         .update()
@@ -171,10 +164,12 @@ export class UsersService {
         .execute();
       console.log(res);
       //await this._userRepository.update(userId, user);
-      return customResponse.getBaseResponse(true, 'success');
+      response.status = true;
+      response.message = 'success';
+      return response;
     } catch (error) {
       console.log(error);
-      return customResponse.getBaseResponse(false, 'System glitch');
+      throw new Error('system glitch, contact system administrator');
     }
   }
 

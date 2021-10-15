@@ -4,7 +4,6 @@ import {
   Post,
   UseGuards,
   Request,
-  Get,
   HttpException,
   HttpStatus,
 } from '@nestjs/common';

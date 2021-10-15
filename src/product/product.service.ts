@@ -1,41 +1,52 @@
-import { customResponse } from './../core/Dtos/message-response';
+import { BaseResponse } from './../core/Dtos/base-response';
+import { NOTFOUND } from './../core/utils/constant/exception-types';
+import { CustomException } from './../common/exception/custom-service-exception';
+import { ProductDto } from './../core/Dtos/productDto/product-dto';
 import { Product } from './../core/entities/product';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { MessageResponse } from 'src/core/Dtos/message-response';
 import { AddProductDto } from 'src/core/Dtos/productDto/add-product-dto';
 import { Repository } from 'typeorm';
 import { UpdateProductDto } from 'src/core/Dtos/productDto/update-product-dto';
+import {
+  ProductResponse,
+  ProductsResponse,
+} from 'src/core/Dtos/productDto/product-response.dto';
+import { AutoMapper, InjectMapper } from 'nestjsx-automapper';
 
 @Injectable()
 export class ProductService {
   constructor(
     @InjectRepository(Product)
     private readonly productRepository: Repository<Product>,
+    @InjectMapper() private readonly mapper: AutoMapper,
   ) {}
-  async getAllProducts(): Promise<MessageResponse<Product[]>> {
-    const products = await this.productRepository.find();
-    return customResponse.getResponse(
-      true,
-      'Fetched product successfully',
-      products,
-    );
+  async getAllProducts(): Promise<ProductsResponse> {
+    const response = new ProductsResponse();
+    try {
+      const products = await this.productRepository.find();
+      response.message = 'Fetched product successfully';
+      response.status = true;
+      response.data = this.mapper.mapArray(products, ProductDto, Product);
+      return response;
+    } catch (error) {
+      console.log(error);
+      //throw CustomException(error.message, error.n)
+    }
   }
 
-  async getProductById(id: number): Promise<MessageResponse<Product>> {
+  async getProductById(id: number): Promise<ProductResponse> {
+    const response = new ProductResponse();
     const products = await this.productRepository.findOne(id);
-    if (!products)
-      return customResponse.getResponse(false, 'Product not found', null);
-    return customResponse.getResponse(
-      true,
-      'Fetched product successfully',
-      products,
-    );
+    if (!products) throw new CustomException(NOTFOUND, 'Product not found');
+    response.message = 'Fetched product successfully';
+    response.status = true;
+    response.data = this.mapper.map(products, ProductDto, Product);
+    return response;
   }
 
-  async addProduct(
-    addProductDto: AddProductDto,
-  ): Promise<MessageResponse<Product>> {
+  async addProduct(addProductDto: AddProductDto): Promise<ProductResponse> {
+    const response = new ProductResponse();
     try {
       const product: Product = new Product();
       product.imageUrl = addProductDto.imageUrl;
@@ -48,26 +59,19 @@ export class ProductService {
       product.modifiedDate = new Date();
       const newProduct = await this.productRepository.create(product);
       const savedProduct = await this.productRepository.save(newProduct);
-      return customResponse.getResponse(
-        true,
-        'Product add successfully',
-        savedProduct,
-      );
+
+      response.message = 'Product add successfully';
+      response.status = true;
+      response.data = this.mapper.map(savedProduct, ProductDto, Product);
+      return response;
     } catch (error) {
-      return customResponse.getResponse(
-        false,
-        'System glitch, contant system administrator',
-        null,
-      );
+      throw new Error('System glitch, contant system administrator');
     }
   }
-  async addPoductPrice(
-    id: number,
-    price: number,
-  ): Promise<MessageResponse<Product>> {
+  async addPoductPrice(id: number, price: number): Promise<ProductResponse> {
+    const response = new ProductResponse();
     const product = await this.productRepository.findOne(id);
-    if (!product)
-      return customResponse.getResponse(false, 'Product not found', null);
+    if (!product) throw new CustomException('Product not found', NOTFOUND);
     product.price = price;
     product.modifiedDate = new Date();
     await this.productRepository
@@ -77,20 +81,19 @@ export class ProductService {
       .where('id = :id', { id: id })
       .execute();
 
-    return customResponse.getResponse(
-      true,
-      'Product price updated successfully',
-      product,
-    );
+    response.message = 'Product price updated successfully';
+    response.status = true;
+    response.data = this.mapper.map(product, ProductDto, Product);
+    return response;
   }
 
   async activateDeactivatePoduct(
     id: number,
     activate: boolean,
-  ): Promise<MessageResponse<Product>> {
+  ): Promise<BaseResponse> {
+    const response = new BaseResponse();
     const product = await this.productRepository.findOne(id);
-    if (!product)
-      return customResponse.getResponse(false, 'Product not found', null);
+    if (!product) throw new CustomException('Product not found', NOTFOUND);
     product.isActive = activate;
     product.modifiedDate = new Date();
     await this.productRepository
@@ -100,20 +103,18 @@ export class ProductService {
       .where('id = :id', { id: id })
       .execute();
 
-    return customResponse.getResponse(
-      true,
-      'Product status updated successfully',
-      product,
-    );
+    response.status = true;
+    response.message = 'Product status updated successfully';
+    return response;
   }
 
   async updatePoduct(
     id: number,
     updateProductDto: UpdateProductDto,
-  ): Promise<MessageResponse<Product>> {
+  ): Promise<ProductResponse> {
+    const response = new ProductResponse();
     const product = await this.productRepository.findOne(id);
-    if (!product)
-      return customResponse.getResponse(false, 'Product not found', null);
+    if (!product) throw new CustomException('Product not found', NOTFOUND);
     product.imageUrl = updateProductDto.imageUrl;
     product.name = updateProductDto.name;
     product.description = updateProductDto.description;
@@ -129,10 +130,9 @@ export class ProductService {
       .where('id = :id', { id: id })
       .execute();
 
-    return customResponse.getResponse(
-      true,
-      'Product price updated successfully',
-      product,
-    );
+    response.message = 'Product price updated successfully';
+    response.status = true;
+    response.data = this.mapper.map(product, ProductDto, Product);
+    return response;
   }
 }
