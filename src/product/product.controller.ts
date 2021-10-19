@@ -1,7 +1,17 @@
 import { UpdateProductDto } from './../core/Dtos/productDto/update-product-dto';
 import { AddProductDto } from './../core/Dtos/productDto/add-product-dto';
 import { ProductService } from './product.service';
-import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Put,
+  UploadedFile,
+  UploadedFiles,
+  UseInterceptors,
+} from '@nestjs/common';
 import {
   ApiBadRequestResponse,
   ApiNotFoundResponse,
@@ -14,6 +24,10 @@ import {
   ProductsResponse,
 } from 'src/core/Dtos/productDto/product-response.dto';
 import { throwError } from 'src/common/exception/custom-service-exception';
+import {
+  FileFieldsInterceptor,
+  FileInterceptor,
+} from '@nestjs/platform-express';
 
 @ApiTags('products')
 @Controller('api/v1/product')
@@ -46,10 +60,27 @@ export class ProductController {
   @ApiOkResponse({ type: ProductResponse })
   @ApiBadRequestResponse({ type: BaseResponse })
   @ApiNotFoundResponse({ type: BaseResponse })
+  @UseInterceptors(
+    FileFieldsInterceptor([
+      { name: 'image', maxCount: 1 },
+      { name: 'video', maxCount: 1 },
+    ]),
+  )
   @Post('')
-  async addProduct(@Body() addProductDto: AddProductDto) {
+  async addProduct(
+    @UploadedFiles()
+    files: {
+      image?: Express.Multer.File[];
+      video?: Express.Multer.File[];
+    },
+    @Body() addProductDto: AddProductDto,
+  ) {
     try {
-      return this.productService.addProduct(addProductDto);
+      return this.productService.addProduct(
+        addProductDto,
+        files.image?.[0],
+        files.video?.[0],
+      );
     } catch (error) {
       throwError(error);
     }
@@ -91,6 +122,28 @@ export class ProductController {
       return this.productService.activateDeactivatePoduct(id, status);
     } catch (error) {
       throwError(error);
+    }
+  }
+
+  @Post('upload')
+  @UseInterceptors(
+    FileFieldsInterceptor([
+      { name: 'image', maxCount: 1 },
+      { name: 'video', maxCount: 1 },
+    ]),
+  )
+  uploadFile(
+    @UploadedFiles()
+    files: {
+      image?: Express.Multer.File[];
+      video?: Express.Multer.File[];
+    },
+  ) {
+    //console.log(file);
+    try {
+      this.productService.upload(files.video?.[0]);
+    } catch (error) {
+      console.log(error);
     }
   }
 }
