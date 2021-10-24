@@ -4,20 +4,48 @@ import { ApiProperty } from '@nestjs/swagger';
 export class ProductDto {
   @ApiProperty()
   @AutoMap()
+  id: number;
+  @ApiProperty()
+  @AutoMap()
   name: string;
   @ApiProperty()
   @AutoMap()
   title!: string;
   @ApiProperty()
   @AutoMap()
-  description!: string;
+  caption: string;
   @ApiProperty()
   @AutoMap()
-  image!: string;
+  imageUrl: string;
   @ApiProperty()
   @AutoMap()
-  price!: number;
+  videoUrl: string;
+  @ApiProperty()
+  @AutoMap()
+  genre: string;
+  @ApiProperty()
+  @AutoMap()
+  mood: string;
+
+  @ApiProperty()
+  @AutoMap()
+  lyrics: string;
+  @ApiProperty()
+  @AutoMap()
+  price: number;
   @ApiProperty()
   @AutoMap()
   categoryId: number;
+
+  @ApiProperty()
+  @AutoMap()
+  isActive: boolean;
+
+  @ApiProperty()
+  @AutoMap()
+  createdDate: Date;
+
+  @ApiProperty()
+  @AutoMap()
+  modifiedDate: Date;
 }

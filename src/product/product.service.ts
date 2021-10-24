@@ -59,15 +59,27 @@ export class ProductService {
   ): Promise<ProductResponse> {
     const response = new ProductResponse();
     try {
+      //const cloudResponse = await this.cloudinaryService.uploadImage(image);
       const product: Product = new Product();
-      product.imageUrl = addProductDto.imageUrl;
-      product.name = addProductDto.name;
-      product.description = addProductDto.description;
+      product.lyrics = addProductDto.lyrics;
+      product.caption = addProductDto.caption;
+      product.mood = addProductDto.mood;
+      product.genre = addProductDto.genre;
       product.isActive = true;
-      product.price = addProductDto.price;
       product.title = addProductDto.title;
       product.createdDate = new Date();
       product.modifiedDate = new Date();
+
+      const cloudImageResponse = await this.cloudinaryService.uploadImage(
+        image,
+      );
+      product.imageUrl = cloudImageResponse.secure_url;
+      if (!video) {
+        const cloudvideoResponse = await this.cloudinaryService.uploadImage(
+          video,
+        );
+        product.videoUrl = cloudvideoResponse.secure_url;
+      }
       const newProduct = await this.productRepository.create(product);
       const savedProduct = await this.productRepository.save(newProduct);
 
@@ -134,13 +146,13 @@ export class ProductService {
     const response = new ProductResponse();
     const product = await this.productRepository.findOne(id);
     if (!product) throw new CustomException('Product not found', NOTFOUND);
-    product.imageUrl = updateProductDto.imageUrl;
-    product.name = updateProductDto.name;
-    product.description = updateProductDto.description;
+    product.lyrics = updateProductDto.lyrics;
+    product.caption = updateProductDto.caption;
+    product.mood = updateProductDto.mood;
+    product.genre = updateProductDto.genre;
     product.isActive = true;
-    product.price = updateProductDto.price;
     product.title = updateProductDto.title;
-    product.createdDate = new Date();
+    product.tags = updateProductDto.tags;
     product.modifiedDate = new Date();
     await this.productRepository
       .createQueryBuilder()

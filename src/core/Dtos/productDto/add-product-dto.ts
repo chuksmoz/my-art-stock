@@ -2,23 +2,41 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsOptional } from 'class-validator';
 export class AddProductDto {
   @ApiProperty()
+  title: string;
+  @ApiProperty({ type: 'string', format: 'binary' })
   @IsNotEmpty()
-  name: string;
-  @ApiProperty()
-  title!: string;
-  @ApiProperty()
-  @IsNotEmpty()
-  description!: string;
-  @ApiProperty()
-  @IsNotEmpty()
-  imageUrl!: string;
-  @ApiProperty()
-  @IsNotEmpty()
-  price!: number;
+  image: string;
+
+  @ApiProperty({ type: 'string', format: 'binary' })
+  @IsOptional()
+  video: string;
+
   @ApiProperty()
   @IsNotEmpty()
-  categoryId!: number;
+  categoryId: number;
+
   @IsOptional()
   @ApiProperty({ type: [String] })
   tags: string[];
+
+  @ApiProperty()
+  @IsNotEmpty()
+  caption: string;
+
+  @IsOptional()
+  @ApiProperty()
+  genre: string;
+
+  @IsOptional()
+  @ApiProperty()
+  mood: string;
+
+  @IsOptional()
+  @ApiProperty()
+  lyrics: string;
+}
+
+export class File {
+  name: string;
+  maxCount: number;
 }

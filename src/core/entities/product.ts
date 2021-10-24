@@ -1,6 +1,13 @@
+import { Category } from './category';
 import { AutoMap } from '@nartc/automapper';
 import { IsBoolean, IsDate, IsInt, IsNumber, IsString } from 'class-validator';
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @Entity()
 export class Product {
@@ -11,33 +18,48 @@ export class Product {
 
   @AutoMap()
   @IsString()
-  @Column({ length: 50 })
-  name!: string;
-
-  @AutoMap()
-  @IsString()
   @Column({ length: 255 })
-  title!: string;
+  title: string;
 
   @AutoMap()
   @IsString()
   @Column('text')
-  description!: string;
+  caption: string;
 
   @AutoMap()
   @IsString()
   @Column()
-  imageUrl!: string;
+  imageUrl: string;
+
+  @AutoMap()
+  @IsString()
+  @Column({ nullable: true })
+  videoUrl: string;
+
+  @AutoMap()
+  @IsString()
+  @Column({ nullable: true })
+  genre: string;
+
+  @AutoMap()
+  @IsString()
+  @Column({ nullable: true })
+  mood: string;
+
+  @AutoMap()
+  @IsString()
+  @Column('text')
+  lyrics: string;
 
   @AutoMap()
   @IsBoolean()
   @Column()
-  isActive!: boolean;
+  isActive: boolean;
 
   @AutoMap()
   @IsNumber()
   @Column()
-  price!: number;
+  price: number;
 
   @AutoMap()
   @Column()
@@ -48,9 +70,13 @@ export class Product {
 
   @IsDate()
   @Column()
-  createdDate!: Date;
+  createdDate: Date;
   @Column({ nullable: true })
   modifiedDate: Date;
   @Column()
   isDeleted: boolean;
+
+  @OneToOne(() => Category)
+  @JoinColumn()
+  category: Category;
 }

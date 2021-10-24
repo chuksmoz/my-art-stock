@@ -16,17 +16,8 @@ export class Cart {
   id!: number;
 
   @IsInt()
-  @ManyToOne(() => User, { onDelete: 'CASCADE' })
-  @JoinColumn()
-  user!: User;
-
-  @IsInt()
   @Column()
   userId!: number;
-
-  @IsInt()
-  @ManyToOne(() => Product, { onDelete: 'CASCADE' })
-  product!: Product;
 
   @IsInt()
   @Column()
@@ -47,4 +38,13 @@ export class Cart {
   @IsDate()
   @Column()
   created!: Date;
+
+  @IsInt()
+  @ManyToOne(() => Product, { onDelete: 'CASCADE' })
+  product!: Product;
+
+  @IsInt()
+  @ManyToOne(() => User, { onDelete: 'CASCADE' })
+  @JoinColumn()
+  user!: User;
 }

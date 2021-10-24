@@ -14,6 +14,7 @@ import {
 } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
+  ApiConsumes,
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiTags,
@@ -60,6 +61,7 @@ export class ProductController {
   @ApiOkResponse({ type: ProductResponse })
   @ApiBadRequestResponse({ type: BaseResponse })
   @ApiNotFoundResponse({ type: BaseResponse })
+  @ApiConsumes('multipart/form-data')
   @UseInterceptors(
     FileFieldsInterceptor([
       { name: 'image', maxCount: 1 },
@@ -76,11 +78,13 @@ export class ProductController {
     @Body() addProductDto: AddProductDto,
   ) {
     try {
+      console.log(addProductDto);
+      /* return;
       return this.productService.addProduct(
         addProductDto,
         files.image?.[0],
         files.video?.[0],
-      );
+      ); */
     } catch (error) {
       throwError(error);
     }
@@ -124,7 +128,7 @@ export class ProductController {
       throwError(error);
     }
   }
-
+  @ApiConsumes('multipart/form-data')
   @Post('upload')
   @UseInterceptors(
     FileFieldsInterceptor([
