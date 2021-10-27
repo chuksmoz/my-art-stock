@@ -1,4 +1,5 @@
 import { IsDate, IsInt, IsNumber, IsString } from 'class-validator';
+import { AutoMap } from 'nestjsx-automapper';
 import {
   Column,
   Entity,
@@ -11,30 +12,43 @@ import { Product } from './product';
 
 @Entity()
 export class OrderItem {
+  @AutoMap()
   @IsInt()
   @PrimaryGeneratedColumn()
   id: number;
 
+  @AutoMap()
   @IsInt()
   @Column()
   orderId: number;
 
+  @AutoMap()
+  @IsInt()
+  @Column()
+  productId: number;
+
+  @AutoMap()
   @IsNumber()
   @Column()
   price!: number;
 
+  @AutoMap()
   @IsInt()
   @Column()
   quantity!: number;
 
+  @AutoMap()
   @IsNumber()
   @Column()
   amount!: number;
 
+  @AutoMap()
   @IsString()
   @Column({ length: 255 })
   title!: string;
 
+  @AutoMap()
+  @AutoMap()
   @IsDate()
   @Column()
   createdAt!: Date;

@@ -8,25 +8,31 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { OrderItem } from './order-item';
+import { AutoMap } from 'nestjsx-automapper';
 
 @Entity()
 export class Order {
+  @AutoMap()
   @IsInt()
   @PrimaryGeneratedColumn()
   id: number;
 
+  @AutoMap()
   @IsInt()
   @Column()
-  userId: string;
+  userId: number;
 
+  @AutoMap()
   @IsNumber()
   @Column()
   price!: number;
 
+  @AutoMap()
   @IsBoolean()
   @Column()
   completed!: boolean;
 
+  @AutoMap()
   @IsDate()
   @Column()
   createdAt!: Date;
