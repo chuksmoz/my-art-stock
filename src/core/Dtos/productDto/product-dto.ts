@@ -5,24 +5,27 @@ export class ProductDto {
   @ApiProperty()
   @AutoMap()
   id: number;
+
   @ApiProperty()
   @AutoMap()
-  name: string;
-  @ApiProperty()
-  @AutoMap()
-  title!: string;
+  title: string;
+
   @ApiProperty()
   @AutoMap()
   caption: string;
+
   @ApiProperty()
   @AutoMap()
   imageUrl: string;
+
   @ApiProperty()
   @AutoMap()
   videoUrl: string;
+
   @ApiProperty()
   @AutoMap()
   genre: string;
+
   @ApiProperty()
   @AutoMap()
   mood: string;
@@ -30,9 +33,11 @@ export class ProductDto {
   @ApiProperty()
   @AutoMap()
   lyrics: string;
+
   @ApiProperty()
   @AutoMap()
   price: number;
+
   @ApiProperty()
   @AutoMap()
   categoryId: number;

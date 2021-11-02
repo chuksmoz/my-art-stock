@@ -8,7 +8,6 @@ import {
   Param,
   Post,
   Put,
-  UploadedFile,
   UploadedFiles,
   UseInterceptors,
 } from '@nestjs/common';
@@ -29,6 +28,7 @@ import {
   FileFieldsInterceptor,
   FileInterceptor,
 } from '@nestjs/platform-express';
+import { FilesToBodyInterceptor } from 'src/common/decorator/file-helper.decorator';
 
 @ApiTags('products')
 @Controller('api/v1/product')
@@ -67,6 +67,7 @@ export class ProductController {
       { name: 'image', maxCount: 1 },
       { name: 'video', maxCount: 1 },
     ]),
+    FilesToBodyInterceptor,
   )
   @Post('')
   async addProduct(
@@ -78,14 +79,16 @@ export class ProductController {
     @Body() addProductDto: AddProductDto,
   ) {
     try {
+      /* console.log(files);
       console.log(addProductDto);
-      /* return;
+      return ''; */
       return this.productService.addProduct(
         addProductDto,
         files.image?.[0],
         files.video?.[0],
-      ); */
+      );
     } catch (error) {
+      console.log(error);
       throwError(error);
     }
   }
@@ -129,12 +132,14 @@ export class ProductController {
     }
   }
   @ApiConsumes('multipart/form-data')
+  //@UseInterceptors(FileInterceptor('files'), FilesToBodyInterceptor)
   @Post('upload')
   @UseInterceptors(
     FileFieldsInterceptor([
       { name: 'image', maxCount: 1 },
       { name: 'video', maxCount: 1 },
     ]),
+    FilesToBodyInterceptor,
   )
   uploadFile(
     @UploadedFiles()
@@ -143,9 +148,9 @@ export class ProductController {
       video?: Express.Multer.File[];
     },
   ) {
-    //console.log(file);
+    //console.log(files);
     try {
-      this.productService.upload(files.video?.[0]);
+      //this.productService.upload(files.video?.[0]);
     } catch (error) {
       console.log(error);
     }

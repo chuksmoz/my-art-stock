@@ -5,6 +5,7 @@ import {
   Column,
   Entity,
   JoinColumn,
+  ManyToOne,
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
@@ -14,7 +15,7 @@ export class Product {
   @AutoMap()
   @IsInt()
   @PrimaryGeneratedColumn()
-  id!: number;
+  id: number;
 
   @AutoMap()
   @IsString()
@@ -58,25 +59,31 @@ export class Product {
 
   @AutoMap()
   @IsNumber()
-  @Column()
+  @Column({ nullable: true })
   price: number;
 
   @AutoMap()
   @Column()
   categoryId: number;
 
-  @Column('simple-array')
+  @AutoMap()
+  @Column('simple-array', { nullable: true })
   tags: string[];
 
+  @AutoMap()
   @IsDate()
   @Column()
   createdDate: Date;
+
+  @AutoMap()
   @Column({ nullable: true })
   modifiedDate: Date;
+
   @Column()
   isDeleted: boolean;
 
-  @OneToOne(() => Category)
-  @JoinColumn()
+  @ManyToOne(() => Category, (category) => category.products)
+  /* @OneToOne(() => Category)
+  @JoinColumn() */
   category: Category;
 }

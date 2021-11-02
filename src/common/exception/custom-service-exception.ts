@@ -34,5 +34,10 @@ export function throwError(error: any) {
         { status: false, message: error.message },
         HttpStatus.NOT_FOUND,
       );
+  } else {
+    throw new HttpException(
+      { status: false, message: error.message },
+      HttpStatus.INTERNAL_SERVER_ERROR,
+    );
   }
 }

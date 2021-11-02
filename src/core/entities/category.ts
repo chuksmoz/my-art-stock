@@ -4,8 +4,10 @@ import {
   CreateDateColumn,
   Entity,
   JoinColumn,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+import { Product } from './product';
 
 @Entity()
 export class Category {
@@ -34,4 +36,6 @@ export class Category {
   @AutoMap()
   @Column()
   isActive: boolean;
+  @OneToMany(() => Product, (product) => product.categoryId)
+  products: Product[];
 }

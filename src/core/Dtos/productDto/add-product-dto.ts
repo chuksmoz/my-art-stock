@@ -4,19 +4,19 @@ export class AddProductDto {
   @ApiProperty()
   title: string;
   @ApiProperty({ type: 'string', format: 'binary' })
-  @IsNotEmpty()
-  image: string;
+  //@IsNotEmpty()
+  image: Express.Multer.File;
 
-  @ApiProperty({ type: 'string', format: 'binary' })
+  @ApiProperty({ type: 'string', format: 'binary', required: false })
   @IsOptional()
-  video: string;
+  video: Express.Multer.File;
 
   @ApiProperty()
   @IsNotEmpty()
   categoryId: number;
 
   @IsOptional()
-  @ApiProperty({ type: [String] })
+  @ApiProperty({ type: [String], required: false })
   tags: string[];
 
   @ApiProperty()
@@ -24,19 +24,14 @@ export class AddProductDto {
   caption: string;
 
   @IsOptional()
-  @ApiProperty()
+  @ApiProperty({ required: false })
   genre: string;
 
   @IsOptional()
-  @ApiProperty()
+  @ApiProperty({ required: false })
   mood: string;
 
   @IsOptional()
-  @ApiProperty()
+  @ApiProperty({ required: false })
   lyrics: string;
-}
-
-export class File {
-  name: string;
-  maxCount: number;
 }

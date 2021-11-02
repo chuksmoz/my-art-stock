@@ -12,11 +12,8 @@ import { OrderModule } from './order/order.module';
 import { CartModule } from './cart/cart.module';
 import { CategoryModule } from './category/category.module';
 import { RefreshTokenModule } from './refresh-token/refresh-token.module';
-//import * as dotenv from 'dotenv';
 import { WinstonModule } from 'nest-winston';
 import { CloudinaryModule } from './cloudinary/cloudinary.module';
-import winston from 'winston';
-//dotenv.config();
 
 @Module({
   imports: [

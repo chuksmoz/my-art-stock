@@ -1,6 +1,5 @@
 import { AutoMap } from '@nartc/automapper';
 import { ApiProperty } from '@nestjs/swagger';
-import { type } from 'os';
 import { OrderItemDto } from './order-item.dto';
 
 export class OrderDto {
