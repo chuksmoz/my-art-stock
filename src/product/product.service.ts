@@ -93,7 +93,7 @@ export class ProductService {
       response.data = this.mapper.map(savedProduct, ProductDto, Product);
       return response;
     } catch (error) {
-      console.log(error.message);
+      console.log(error);
       throw new Error('System glitch, contact system administrator');
     }
   }
