@@ -18,7 +18,9 @@ async function bootstrap() {
   //const { httpAdapter } = app.get(HttpAdapterHost);
   //app.useGlobalFilters(new CustomExceptionFilter());
   app.useGlobalPipes(new ValidationPipe());
-  //app.enableCors();
+  app.enableCors({
+    origin: 'localhost:3000',
+  });
   app.useLogger(app.get(WINSTON_MODULE_NEST_PROVIDER));
   await app.listen(process.env.PORT || 3000);
 }
