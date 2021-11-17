@@ -19,7 +19,7 @@ async function bootstrap() {
   //app.useGlobalFilters(new CustomExceptionFilter());
   app.useGlobalPipes(new ValidationPipe());
   app.enableCors({
-    origin: 'http://localhost:3000',
+    origin: /https?:\/\/(([^/]+\.)?example\.com)$/i,
     credentials: true,
   });
   app.useLogger(app.get(WINSTON_MODULE_NEST_PROVIDER));
