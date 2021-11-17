@@ -20,7 +20,7 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe());
   app.enableCors({
     origin: /https?:\/\/(([^/]+\.)?example\.com)$/i,
-    credentials: true,
+    //credentials: true,
   });
   app.useLogger(app.get(WINSTON_MODULE_NEST_PROVIDER));
   await app.listen(process.env.PORT || 3000);
