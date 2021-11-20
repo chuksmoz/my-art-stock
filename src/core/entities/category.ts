@@ -14,6 +14,7 @@ export class Category {
   @AutoMap()
   @PrimaryGeneratedColumn()
   id: number;
+
   @AutoMap()
   @Column()
   categoryName: string;
@@ -22,7 +23,6 @@ export class Category {
   @Column({ nullable: true })
   categoryId?: number;
 
-  //@ManyToOne(() => Category, (category) => category.id)
   @JoinColumn({ name: 'categoryId' })
   public category?: Category;
   @AutoMap()
@@ -36,6 +36,10 @@ export class Category {
   @AutoMap()
   @Column()
   isActive: boolean;
+
+  @Column({ nullable: true })
+  isParent: boolean;
+
   @OneToMany(() => Product, (product) => product.categoryId)
   products: Product[];
 }

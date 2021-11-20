@@ -58,35 +58,66 @@ export class ProductController {
     }
   }
 
+  // @ApiOkResponse({ type: ProductResponse })
+  // @ApiBadRequestResponse({ type: BaseResponse })
+  // @ApiNotFoundResponse({ type: BaseResponse })
+  // @ApiConsumes('multipart/form-data')
+  // @UseInterceptors(
+  //   FileFieldsInterceptor([
+  //     { name: 'image', maxCount: 1 },
+  //     { name: 'video', maxCount: 1 },
+  //   ]),
+  //   FilesToBodyInterceptor,
+  // )
+  // @Post('')
+  // async addProduct(
+  //   @UploadedFiles()
+  //   files: {
+  //     image?: Express.Multer.File[];
+  //     video?: Express.Multer.File[];
+  //   },
+  //   @Body() addProductDto: AddProductDto,
+  // ) {
+  //   try {
+  //     /* console.log(files);
+  //     console.log(addProductDto);
+  //     return ''; */
+  //     return this.productService.addProduct(
+  //       addProductDto,
+  //       files.image?.[0],
+  //       files.video?.[0],
+  //     );
+  //   } catch (error) {
+  //     console.log(error);
+  //     throwError(error);
+  //   }
+  // }
+
   @ApiOkResponse({ type: ProductResponse })
   @ApiBadRequestResponse({ type: BaseResponse })
   @ApiNotFoundResponse({ type: BaseResponse })
-  @ApiConsumes('multipart/form-data')
-  @UseInterceptors(
-    FileFieldsInterceptor([
-      { name: 'image', maxCount: 1 },
-      { name: 'video', maxCount: 1 },
-    ]),
-    FilesToBodyInterceptor,
-  )
+  // @ApiConsumes('multipart/form-data')
+  // @UseInterceptors(
+  //   FileFieldsInterceptor([
+  //     { name: 'image', maxCount: 1 },
+  //     { name: 'video', maxCount: 1 },
+  //   ]),
+  //   FilesToBodyInterceptor,
+  // )
   @Post('')
   async addProduct(
-    @UploadedFiles()
+    /* @UploadedFiles()
     files: {
       image?: Express.Multer.File[];
       video?: Express.Multer.File[];
-    },
+    }, */
     @Body() addProductDto: AddProductDto,
   ) {
     try {
       /* console.log(files);
       console.log(addProductDto);
       return ''; */
-      return this.productService.addProduct(
-        addProductDto,
-        files.image?.[0],
-        files.video?.[0],
-      );
+      return this.productService.addProduct(addProductDto);
     } catch (error) {
       console.log(error);
       throwError(error);
@@ -148,7 +179,7 @@ export class ProductController {
       video?: Express.Multer.File[];
     },
   ) {
-    //console.log(files);
+    console.log(files);
     try {
       //this.productService.upload(files.video?.[0]);
     } catch (error) {

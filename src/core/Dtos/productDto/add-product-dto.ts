@@ -3,13 +3,13 @@ import { IsNotEmpty, IsOptional } from 'class-validator';
 export class AddProductDto {
   @ApiProperty()
   title: string;
-  @ApiProperty({ type: 'string', format: 'binary' })
+  @ApiProperty({ type: 'string' })
   //@IsNotEmpty()
-  image: Express.Multer.File;
+  image: string;
 
-  @ApiProperty({ type: 'string', format: 'binary', required: false })
+  @ApiProperty({ type: 'string', required: false })
   @IsOptional()
-  video: Express.Multer.File;
+  video: string;
 
   @ApiProperty()
   @IsNotEmpty()

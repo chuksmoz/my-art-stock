@@ -52,7 +52,7 @@ export class ProductService {
     }
   }
 
-  async addProduct(
+  /* async addProduct(
     payload: AddProductDto,
     image: Express.Multer.File,
     video: Express.Multer.File,
@@ -96,7 +96,50 @@ export class ProductService {
       console.log(error);
       throw new Error('System glitch, contact system administrator');
     }
+  } */
+
+  async addProduct(payload: AddProductDto): Promise<ProductResponse> {
+    const response = new ProductResponse();
+    try {
+      //const cloudResponse = await this.cloudinaryService.uploadImage(image);
+      const product: Product = new Product();
+      product.lyrics = payload.lyrics;
+      product.caption = payload.caption;
+      product.mood = payload.mood;
+      product.genre = payload.genre;
+      product.isActive = true;
+      product.title = payload.title;
+      product.isDeleted = false;
+      product.categoryId = payload.categoryId;
+      product.createdDate = new Date();
+      product.modifiedDate = new Date();
+
+      /* const cloudImageResponse = await this.cloudinaryService.uploadImage(
+        payload.image,
+      );
+      //console.log(cloudImageResponse);
+      product.imageUrl = cloudImageResponse.secure_url;
+      if (video != null) {
+        console.log('am inside');
+        const cloudvideoResponse = await this.cloudinaryService.uploadImage(
+          video,
+        );
+        product.videoUrl = cloudvideoResponse.secure_url;
+        //console.log(cloudvideoResponse);
+      } */
+      const newProduct = await this.productRepository.create(product);
+      const savedProduct = await this.productRepository.save(newProduct);
+
+      response.message = 'Product added successfully';
+      response.status = true;
+      response.data = this.mapper.map(savedProduct, ProductDto, Product);
+      return response;
+    } catch (error) {
+      console.log(error);
+      throw new Error('System glitch, contact system administrator');
+    }
   }
+
   async addPoductPrice(id: number, price: number): Promise<ProductResponse> {
     try {
       const response = new ProductResponse();

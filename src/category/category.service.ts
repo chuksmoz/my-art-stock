@@ -126,4 +126,28 @@ export class CategoryService {
     response.data = categoryDto;
     return response;
   }
+
+  async getCategoryById(id: number): Promise<CategoryResponse> {
+    const response = new CategoryResponse();
+    const category = await this.categoryRepository.findOne(id);
+
+    const categoryDto = this.mapper.map(category, CategoryDto, Category);
+    response.status = true;
+    response.message = 'Category fetch successfully';
+    response.data = categoryDto;
+    return response;
+  }
+
+  async getSubCategoryById(categoryId: number): Promise<SubCategoryResponse> {
+    const response = new SubCategoryResponse();
+    const category = await this.categoryRepository.findOne({
+      where: { categoryId: categoryId },
+    });
+
+    const categoryDto = this.mapper.map(category, SubCategoryDto, Category);
+    response.status = true;
+    response.message = 'Category fetch successfully';
+    response.data = categoryDto;
+    return response;
+  }
 }
