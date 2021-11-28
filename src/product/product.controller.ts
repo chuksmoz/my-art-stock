@@ -1,3 +1,5 @@
+import { Roles } from './../core/utils/decorator/role-decorator';
+import { Role } from './../core/enums/user-role';
 import { UpdateProductDto } from './../core/Dtos/productDto/update-product-dto';
 import { AddProductDto } from './../core/Dtos/productDto/add-product-dto';
 import { ProductService } from './product.service';
@@ -24,16 +26,15 @@ import {
   ProductsResponse,
 } from 'src/core/Dtos/productDto/product-response.dto';
 import { throwError } from 'src/common/exception/custom-service-exception';
-import {
-  FileFieldsInterceptor,
-  FileInterceptor,
-} from '@nestjs/platform-express';
+import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { FilesToBodyInterceptor } from 'src/common/decorator/file-helper.decorator';
 
 @ApiTags('products')
 @Controller('api/v1/product')
 export class ProductController {
   constructor(private readonly productService: ProductService) {}
+
+  @Roles(Role.CUSTOMER, Role.ADMIN)
   @ApiOkResponse({ type: ProductsResponse })
   @ApiBadRequestResponse({ type: BaseResponse })
   @ApiNotFoundResponse({ type: BaseResponse })

@@ -1,23 +1,23 @@
-import { Contributor } from './contributor';
-import { AutoMap } from 'nestjsx-automapper';
+import { User } from 'src/core/entities/users';
+import { SubContributor } from './sub-contributor';
+import { AutoMap } from '@nartc/automapper';
 import {
   Column,
   CreateDateColumn,
   Entity,
+  ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { Role } from '../enums/user-role';
-import { SubContributor } from './sub-contributor';
 
 @Entity()
-export class User {
+export class Contributor {
   @AutoMap()
   @PrimaryGeneratedColumn()
   id: number;
 
   @AutoMap()
-  @Column({ length: 100, nullable: true })
+  @Column({ length: 100 })
   firstName: string;
 
   @Column({ length: 100, nullable: true })
@@ -48,22 +48,6 @@ export class User {
   @Column({ nullable: true })
   city: string;
 
-  @Column()
-  password: string;
-
-  @Column()
-  passwordTries: number;
-
-  @Column({ nullable: true })
-  refreshToken: string;
-
-  @Column({
-    type: 'enum',
-    enum: Role,
-    default: Role.CUSTOMER,
-  })
-  role: Role;
-
   @AutoMap()
   @CreateDateColumn()
   createdDate: Date;
@@ -73,10 +57,6 @@ export class User {
   modifiedDate: Date;
 
   @AutoMap()
-  @Column({ nullable: true })
-  lastLoginDate: Date;
-
-  @AutoMap()
   @Column()
   isDeleted: boolean;
 
@@ -84,9 +64,12 @@ export class User {
   @Column()
   isActive: boolean;
 
-  @OneToMany(() => Contributor, (contributor) => contributor.user)
-  contributors: Contributor[];
+  @ManyToOne(() => User, (user) => user.contributors)
+  user: User;
 
-  @OneToMany(() => SubContributor, (sunContributor) => sunContributor.user)
+  @OneToMany(
+    () => SubContributor,
+    (subContributor) => subContributor.contributor,
+  )
   subContributors: SubContributor[];
 }

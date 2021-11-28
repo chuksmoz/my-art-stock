@@ -6,7 +6,6 @@ import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
-import { configService } from './core/config/config-service';
 import { ProductModule } from './product/product.module';
 import { OrderModule } from './order/order.module';
 import { CartModule } from './cart/cart.module';
@@ -14,6 +13,9 @@ import { CategoryModule } from './category/category.module';
 import { RefreshTokenModule } from './refresh-token/refresh-token.module';
 import { WinstonModule } from 'nest-winston';
 import { CloudinaryModule } from './cloudinary/cloudinary.module';
+import { ContributorModule } from './contributor/contributor.module';
+import { SubContributorModule } from './sub-contributor/sub-contributor.module';
+import { EmailModule } from './email/email.module';
 
 @Module({
   imports: [
@@ -48,6 +50,9 @@ import { CloudinaryModule } from './cloudinary/cloudinary.module';
     CategoryModule,
     RefreshTokenModule,
     CloudinaryModule,
+    ContributorModule,
+    SubContributorModule,
+    EmailModule,
   ],
   controllers: [AppController],
   providers: [AppService],

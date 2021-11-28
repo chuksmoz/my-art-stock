@@ -20,10 +20,7 @@ import {
   Put,
   Delete,
 } from '@nestjs/common';
-import {
-  CreateContributorRequest,
-  CreateUserRequest,
-} from '../core/Dtos/userDtos/create-user-request';
+import { CreateUserRequest } from '../core/Dtos/userDtos/create-user-request';
 import { ChangePasswordRequest } from '../core/model/user/change-password-request';
 import {
   ApiTags,
@@ -52,7 +49,7 @@ export class UsersController {
     }
   }
 
-  @ApiOkResponse({ type: CreateUserResponse })
+  /* @ApiOkResponse({ type: CreateUserResponse })
   @ApiBadRequestResponse({ type: BaseResponse })
   @ApiNotFoundResponse({ type: BaseResponse })
   @Post('/createContributor')
@@ -64,7 +61,7 @@ export class UsersController {
     } catch (error) {
       throwError(error);
     }
-  }
+  } */
 
   @ApiOkResponse({ type: GetUsersResponse })
   @ApiBadRequestResponse({ type: BaseResponse })

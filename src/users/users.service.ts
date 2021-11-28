@@ -5,10 +5,7 @@ import { AutoMapper } from '@nartc/automapper';
 import { InjectMapper } from 'nestjsx-automapper';
 import { USER_NOT_FOUND } from './../core/utils/constant/user-service.constant';
 import { ChangePasswordRequest } from './../core/model/user/change-password-request';
-import {
-  CreateContributorRequest,
-  CreateUserRequest,
-} from '../core/Dtos/userDtos/create-user-request';
+import { CreateUserRequest } from '../core/Dtos/userDtos/create-user-request';
 import {
   GetSingleUserResponse,
   GetUsersResponse,
@@ -22,7 +19,6 @@ import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import EncryptionHelperService from '../core/utils/EncryptionHelperService';
 import { AuthDto, CreateUserResponse } from '../core/Dtos/authDtos/auth-dto';
-import { Role } from 'src/core/enums/user-role';
 
 @Injectable()
 export class UsersService {
@@ -91,7 +87,7 @@ export class UsersService {
     }
   }
 
-  async createContributor(
+  /*   async createContributor(
     payload: CreateContributorRequest,
   ): Promise<CreateUserResponse> {
     const createUserResponse = new CreateUserResponse();
@@ -130,7 +126,7 @@ export class UsersService {
     } catch (error) {
       throw new Error('system glitch, contact system administrator');
     }
-  }
+  } */
 
   async changePassword(
     userId: number,

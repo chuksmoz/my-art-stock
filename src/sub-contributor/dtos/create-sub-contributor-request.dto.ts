@@ -1,8 +1,8 @@
+import { AutoMap } from '@nartc/automapper';
 import { ApiProperty } from '@nestjs/swagger';
 import { IsEmail, IsNotEmpty } from 'class-validator';
-import { AutoMap } from 'nestjsx-automapper';
 
-export class CreateUserRequest {
+export class CreateSubContributorRequest {
   @AutoMap()
   @ApiProperty()
   @IsNotEmpty()
@@ -10,14 +10,27 @@ export class CreateUserRequest {
 
   @AutoMap()
   @ApiProperty()
+  @IsNotEmpty()
+  lastName: string;
+
+  @AutoMap()
+  @ApiProperty()
   @IsEmail()
   email: string;
 
+  @AutoMap()
   @ApiProperty()
-  @IsNotEmpty()
-  password: string;
+  phoneNumber: string;
 
   @ApiProperty()
   @IsNotEmpty()
-  confirmPassword: string;
+  countryId: number;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  stateId: number;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  city: string;
 }
