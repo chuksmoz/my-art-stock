@@ -11,6 +11,7 @@ import {
   ApiBadRequestResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
+  ApiTags,
 } from '@nestjs/swagger';
 import { throwError } from 'src/common/exception/custom-service-exception';
 import { BaseResponse } from 'src/core/Dtos/base-response';
@@ -22,6 +23,7 @@ import {
 import { UpdateSubContributorRequest } from './dtos/update-contributor-request.dto';
 import { SubContributorService } from './sub-contributor.service';
 
+@ApiTags('sub ccontributor')
 @Controller('subCcontributor')
 export class SubContributorController {
   constructor(private readonly subContributorService: SubContributorService) {}

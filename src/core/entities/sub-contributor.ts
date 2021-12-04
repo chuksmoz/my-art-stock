@@ -5,9 +5,11 @@ import {
   CreateDateColumn,
   Entity,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { User } from './users';
+import { Product } from './product';
 
 @Entity()
 export class SubContributor {
@@ -68,4 +70,7 @@ export class SubContributor {
 
   @ManyToOne(() => Contributor, (contributor) => contributor.subContributors)
   contributor: Contributor;
+
+  @OneToMany(() => Product, (product) => product.subContributor)
+  products: Product[];
 }

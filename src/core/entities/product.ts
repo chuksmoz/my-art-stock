@@ -1,14 +1,9 @@
+import { SubContributor } from './sub-contributor';
 import { Category } from './category';
 import { AutoMap } from '@nartc/automapper';
 import { IsBoolean, IsDate, IsInt, IsNumber, IsString } from 'class-validator';
-import {
-  Column,
-  Entity,
-  JoinColumn,
-  ManyToOne,
-  OneToOne,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Contributor } from './contributor';
 
 @Entity()
 export class Product {
@@ -86,4 +81,8 @@ export class Product {
   /* @OneToOne(() => Category)
   @JoinColumn() */
   category: Category;
+  @ManyToOne(() => SubContributor, (subContributor) => subContributor.products)
+  subContributor: SubContributor;
+  @ManyToOne(() => Contributor, (contributor) => contributor.products)
+  contributor: Contributor;
 }

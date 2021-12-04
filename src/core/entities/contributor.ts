@@ -9,6 +9,7 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+import { Product } from './product';
 
 @Entity()
 export class Contributor {
@@ -72,4 +73,6 @@ export class Contributor {
     (subContributor) => subContributor.contributor,
   )
   subContributors: SubContributor[];
+  @OneToMany(() => Product, (product) => product.contributor)
+  products: Product[];
 }

@@ -19,6 +19,7 @@ import {
 } from './dtos/sub-contributor-response.dto';
 import { SubContributorDto } from './dtos/sub-contributor.dto';
 import { UpdateSubContributorRequest } from './dtos/update-contributor-request.dto';
+import { Product } from 'src/core/entities/product';
 
 @Injectable()
 export class SubContributorService {
@@ -30,6 +31,8 @@ export class SubContributorService {
     private readonly _contributorRepository: Repository<Contributor>,
     @InjectRepository(SubContributor)
     private readonly _subContributorRepository: Repository<SubContributor>,
+    @InjectRepository(Product)
+    private readonly _productRepository: Repository<Product>,
     @InjectMapper() private readonly mapper: AutoMapper,
   ) {}
 
@@ -170,5 +173,9 @@ export class SubContributorService {
     response.message = 'User deleted successfully';
     response.status = true;
     return response;
+  }
+
+  async getProduct(id: number) {
+    await this._productRepository.find({ where: { id } });
   }
 }
