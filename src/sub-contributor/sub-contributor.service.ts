@@ -79,7 +79,7 @@ export class SubContributorService {
       subContributor.user = savedUser;
 
       const savedSubContributor = await this._subContributorRepository.save(
-        contributor,
+        subContributor,
       );
 
       response.data = this.mapper.map(
@@ -91,6 +91,7 @@ export class SubContributorService {
       response.status = true;
       return response;
     } catch (error) {
+      console.log(error);
       throw new Error('system glitch, contact system administrator');
     }
   }
