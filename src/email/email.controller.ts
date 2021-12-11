@@ -13,7 +13,7 @@ import { CreateEmailRequestDto } from './dto/create-email-request-dto';
 import { EmailResponseDto, EmailsResponseDto } from './dto/email-response.dto';
 
 @ApiTags('email')
-@Controller('email')
+@Controller('api/v1/email')
 export class EmailController {
   constructor(private readonly emailService: EmailService) {}
   @ApiOkResponse({ type: EmailResponseDto })
