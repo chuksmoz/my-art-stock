@@ -52,7 +52,26 @@ export class ProductService {
     }
   }
 
+  async getProductsByUserId(userId: number): Promise<ProductsResponse> {
+    const response = new ProductsResponse();
+    try {
+      const products = await this.productRepository.find({ where: { userId } });
+      if (!products) throw new CustomException(NOTFOUND, 'Product not found');
+      response.message = 'Fetched product successfully';
+      response.status = true;
+      response.data = await this.mapper.mapArrayAsync(
+        products,
+        ProductDto,
+        Product,
+      );
+      return response;
+    } catch (error) {
+      throw new Error('System glitch, contact system administrator');
+    }
+  }
+
   async addProduct(
+    userId: number,
     payload: AddProductDto,
     image: Express.Multer.File,
     video: Express.Multer.File,
@@ -78,7 +97,6 @@ export class ProductService {
       //console.log(cloudImageResponse);
       product.imageUrl = cloudImageResponse.secure_url;
       if (video != null) {
-        console.log('am inside');
         const cloudvideoResponse = await this.cloudinaryService.uploadImage(
           video,
         );

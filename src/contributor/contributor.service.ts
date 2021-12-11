@@ -1,3 +1,4 @@
+import { ProductsResponse } from './../core/Dtos/productDto/product-response.dto';
 import { ContributorDto } from './dtos/contributor.dto';
 import { Contributor } from './../core/entities/contributor';
 import { Injectable } from '@nestjs/common';
@@ -20,6 +21,7 @@ import { USER_NOT_FOUND } from 'src/core/utils/constant/user-service.constant';
 import { UpdateContributorRequest } from './dtos/updateContributorRequest.dto';
 import { CreateContributorRequest } from './dtos/createContributorRequest.dto';
 import { InjectRepository } from '@nestjs/typeorm';
+import { ProductService } from 'src/product/product.service';
 
 @Injectable()
 export class ContributorService {
@@ -31,6 +33,7 @@ export class ContributorService {
     private readonly _contributorRepository: Repository<Contributor>,
     private authService: AuthService,
     @InjectMapper() private readonly mapper: AutoMapper,
+    private readonly _productService: ProductService,
   ) {}
 
   async createContributor(
@@ -77,8 +80,8 @@ export class ContributorService {
 
       const res = await this.authService.login(savedUser);
       authDto.token = res.access_token;
-      authDto.user = this.mapper.map(savedUser, UserDto, User);
-      createUserResponse.message = 'user created successfully';
+      authDto.user = this.mapper.map(savedContributor, UserDto, ContributorDto);
+      createUserResponse.message = 'Contributor created successfully';
       createUserResponse.data = authDto;
       createUserResponse.status = true;
       return createUserResponse;
@@ -89,21 +92,25 @@ export class ContributorService {
 
   async getContributorById(id: number): Promise<ContributorResponse> {
     const response = new ContributorResponse();
-    const contributor = await this._contributorRepository.findOne(id);
-    if (!contributor) {
-      throw new CustomException(USER_NOT_FOUND, NOTFOUND);
+    try {
+      const contributor = await this._contributorRepository.findOne(id);
+      if (!contributor) {
+        throw new CustomException(USER_NOT_FOUND, NOTFOUND);
+      }
+      response.message = 'Contributor fetched successfully';
+      response.status = true;
+      response.data = this.mapper.map(contributor, ContributorDto, Contributor);
+      return response;
+    } catch (error) {
+      throw new Error('system glitch, contact system administrator');
     }
-    response.message = 'User fetched successfully';
-    response.status = true;
-    response.data = this.mapper.map(contributor, ContributorDto, Contributor);
-    return response;
   }
 
   async getContributors(): Promise<ContributorsResponse> {
     const response = new ContributorsResponse();
     const contributors = await this._contributorRepository.find();
     response.status = true;
-    response.message = 'UserS fetched successfully';
+    response.message = 'Contributors fetched successfully';
     response.data = this.mapper.mapArray(
       contributors,
       ContributorDto,
@@ -130,7 +137,7 @@ export class ContributorService {
       .where('id= :id', { id: id })
       .execute();
 
-    response.message = 'User updated successfully';
+    response.message = 'Contributor updated successfully';
     response.status = true;
     response.data = this.mapper.map(
       existingContributors,
@@ -154,8 +161,21 @@ export class ContributorService {
       .where('id= :id', { id: id })
       .execute();
 
-    response.message = 'User deleted successfully';
+    response.message = 'Contributor deleted successfully';
     response.status = true;
     return response;
+  }
+
+  async getContributorProducts(id: number): Promise<ProductsResponse> {
+    try {
+      const existingUser = await this._userRepository.findOne(id);
+      if (!existingUser) {
+        throw new CustomException(USER_NOT_FOUND, NOTFOUND);
+      }
+
+      return await this._productService.getProductsByUserId(id);
+    } catch (error) {
+      throw new Error('system glitch, contact system administrator');
+    }
   }
 }

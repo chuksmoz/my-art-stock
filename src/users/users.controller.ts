@@ -27,10 +27,12 @@ import {
   ApiOkResponse,
   ApiBadRequestResponse,
   ApiNotFoundResponse,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 import { throwError } from './../common/exception/custom-service-exception';
 
 @ApiTags('user')
+@ApiBearerAuth()
 @Controller('api/v1/user')
 export class UsersController {
   constructor(private readonly userService: UsersService) {}
@@ -63,6 +65,7 @@ export class UsersController {
     }
   } */
 
+  @UseGuards(JwtAuthGuard)
   @ApiOkResponse({ type: GetUsersResponse })
   @ApiBadRequestResponse({ type: BaseResponse })
   @ApiNotFoundResponse({ type: BaseResponse })
@@ -74,6 +77,8 @@ export class UsersController {
       throwError(error);
     }
   }
+
+  @UseGuards(JwtAuthGuard)
   @ApiOkResponse({ type: GetSingleUserResponse })
   @ApiBadRequestResponse({ type: BaseResponse })
   @ApiNotFoundResponse({ type: BaseResponse })
@@ -86,6 +91,7 @@ export class UsersController {
     }
   }
 
+  @UseGuards(JwtAuthGuard)
   @ApiOkResponse({ type: GetSingleUserResponse })
   @ApiBadRequestResponse({ type: BaseResponse })
   @ApiNotFoundResponse({ type: BaseResponse })
@@ -101,6 +107,7 @@ export class UsersController {
     }
   }
 
+  @UseGuards(JwtAuthGuard)
   @ApiOkResponse({ type: BaseResponse })
   @ApiBadRequestResponse({ type: BaseResponse })
   @ApiNotFoundResponse({ type: BaseResponse })

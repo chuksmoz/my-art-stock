@@ -11,7 +11,9 @@ import {
   Post,
   Put,
   UploadedFiles,
+  UseGuards,
   UseInterceptors,
+  Request,
 } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
@@ -28,12 +30,14 @@ import {
 import { throwError } from 'src/common/exception/custom-service-exception';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { FilesToBodyInterceptor } from 'src/common/decorator/file-helper.decorator';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 
 @ApiTags('products')
 @Controller('api/v1/product')
 export class ProductController {
   constructor(private readonly productService: ProductService) {}
 
+  @UseGuards(JwtAuthGuard)
   @Roles(Role.CUSTOMER, Role.ADMIN)
   @ApiOkResponse({ type: ProductsResponse })
   @ApiBadRequestResponse({ type: BaseResponse })
@@ -47,6 +51,7 @@ export class ProductController {
     }
   }
 
+  @UseGuards(JwtAuthGuard)
   @ApiOkResponse({ type: ProductResponse })
   @ApiBadRequestResponse({ type: BaseResponse })
   @ApiNotFoundResponse({ type: BaseResponse })
@@ -59,6 +64,7 @@ export class ProductController {
     }
   }
 
+  @UseGuards(JwtAuthGuard)
   @ApiOkResponse({ type: ProductResponse })
   @ApiBadRequestResponse({ type: BaseResponse })
   @ApiNotFoundResponse({ type: BaseResponse })
@@ -78,12 +84,14 @@ export class ProductController {
       video?: Express.Multer.File[];
     },
     @Body() addProductDto: AddProductDto,
+    @Request() req,
   ) {
     try {
       /* console.log(files);
       console.log(addProductDto);
       return ''; */
       return this.productService.addProduct(
+        req.user.id,
         addProductDto,
         files.image?.[0],
         files.video?.[0],
@@ -123,6 +131,7 @@ export class ProductController {
     }
   } */
 
+  @UseGuards(JwtAuthGuard)
   @ApiOkResponse({ type: ProductResponse })
   @ApiBadRequestResponse({ type: BaseResponse })
   @ApiNotFoundResponse({ type: BaseResponse })
@@ -138,6 +147,7 @@ export class ProductController {
     }
   }
 
+  @UseGuards(JwtAuthGuard)
   @ApiOkResponse({ type: ProductResponse })
   @ApiBadRequestResponse({ type: BaseResponse })
   @ApiNotFoundResponse({ type: BaseResponse })
@@ -150,6 +160,7 @@ export class ProductController {
     }
   }
 
+  @UseGuards(JwtAuthGuard)
   @ApiOkResponse({ type: BaseResponse })
   @ApiBadRequestResponse({ type: BaseResponse })
   @ApiNotFoundResponse({ type: BaseResponse })

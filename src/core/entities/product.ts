@@ -13,6 +13,11 @@ export class Product {
   id: number;
 
   @AutoMap()
+  @IsInt()
+  @Column({ nullable: true })
+  userId: number;
+
+  @AutoMap()
   @IsString()
   @Column({ length: 255 })
   title: string;

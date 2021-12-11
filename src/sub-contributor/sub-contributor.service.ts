@@ -1,3 +1,5 @@
+import { Email } from './../core/entities/email';
+import { EmailService } from './../email/email.service';
 import { SubContributor } from './../core/entities/sub-contributor';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -19,7 +21,8 @@ import {
 } from './dtos/sub-contributor-response.dto';
 import { SubContributorDto } from './dtos/sub-contributor.dto';
 import { UpdateSubContributorRequest } from './dtos/update-contributor-request.dto';
-import { Product } from 'src/core/entities/product';
+import { ProductsResponse } from 'src/core/Dtos/productDto/product-response.dto';
+import { ProductService } from 'src/product/product.service';
 
 @Injectable()
 export class SubContributorService {
@@ -31,8 +34,8 @@ export class SubContributorService {
     private readonly _contributorRepository: Repository<Contributor>,
     @InjectRepository(SubContributor)
     private readonly _subContributorRepository: Repository<SubContributor>,
-    @InjectRepository(Product)
-    private readonly _productRepository: Repository<Product>,
+    private readonly _productService: ProductService,
+    private readonly _emailService: EmailService,
     @InjectMapper() private readonly mapper: AutoMapper,
   ) {}
 
@@ -54,9 +57,10 @@ export class SubContributorService {
       if (!contributor)
         throw new CustomException('contributor does not exists', BADREQUEST);
 
+      const password = 'Welcome@123';
       const user: User = new User();
       user.email = payload.email;
-      user.password = await this.encryptor.encrypt('Welcome@123');
+      user.password = await this.encryptor.encrypt(password);
       user.modifiedDate = new Date();
       user.isDeleted = false;
       user.isActive = true;
@@ -87,8 +91,18 @@ export class SubContributorService {
         SubContributorDto,
         SubContributor,
       );
+
       response.message = 'user created successfully';
       response.status = true;
+
+      const email = new Email();
+      email.to = subContributor.email;
+      email.from = 'noreply@myartstock.com';
+      email.subject = 'Welcome to my Art Stock';
+      email.body = `Dear ${subContributor.firstName} your username is : [${subContributor.email}] and your password is : [${password}]`;
+
+      await this._emailService.addEmail(email);
+
       return response;
     } catch (error) {
       console.log(error);
@@ -176,7 +190,16 @@ export class SubContributorService {
     return response;
   }
 
-  async getProduct(id: number) {
-    await this._productRepository.find({ where: { id } });
+  async getContributorProducts(id: number): Promise<ProductsResponse> {
+    try {
+      const existingUser = await this._userRepository.findOne(id);
+      if (!existingUser) {
+        throw new CustomException(USER_NOT_FOUND, NOTFOUND);
+      }
+
+      return await this._productService.getProductsByUserId(id);
+    } catch (error) {
+      throw new Error('system glitch, contact system administrator');
+    }
   }
 }

@@ -6,6 +6,8 @@ import {
   Param,
   Post,
   Put,
+  Req,
+  UseGuards,
 } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
@@ -13,8 +15,10 @@ import {
   ApiOkResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { throwError } from 'src/common/exception/custom-service-exception';
 import { BaseResponse } from 'src/core/Dtos/base-response';
+import { ProductsResponse } from 'src/core/Dtos/productDto/product-response.dto';
 import { CreateSubContributorRequest } from './dtos/create-sub-contributor-request.dto';
 import {
   SubContributorResponse,
@@ -24,7 +28,7 @@ import { UpdateSubContributorRequest } from './dtos/update-contributor-request.d
 import { SubContributorService } from './sub-contributor.service';
 
 @ApiTags('sub ccontributor')
-@Controller('subCcontributor')
+@Controller('api/v1/subCcontributor')
 export class SubContributorController {
   constructor(private readonly subContributorService: SubContributorService) {}
 
@@ -42,17 +46,19 @@ export class SubContributorController {
     }
   }
 
+  @UseGuards(JwtAuthGuard)
   @ApiOkResponse({ type: SubContributorsResponse })
   @ApiBadRequestResponse({ type: BaseResponse })
   @ApiNotFoundResponse({ type: BaseResponse })
   @Get('')
-  async getAllUsers() {
+  async getAllSubContributors() {
     try {
       return await this.subContributorService.getSubContributors();
     } catch (error) {
       throwError(error);
     }
   }
+  @UseGuards(JwtAuthGuard)
   @ApiOkResponse({ type: SubContributorResponse })
   @ApiBadRequestResponse({ type: BaseResponse })
   @ApiNotFoundResponse({ type: BaseResponse })
@@ -65,6 +71,7 @@ export class SubContributorController {
     }
   }
 
+  @UseGuards(JwtAuthGuard)
   @ApiOkResponse({ type: SubContributorResponse })
   @ApiBadRequestResponse({ type: BaseResponse })
   @ApiNotFoundResponse({ type: BaseResponse })
@@ -80,6 +87,7 @@ export class SubContributorController {
     }
   }
 
+  @UseGuards(JwtAuthGuard)
   @ApiOkResponse({ type: BaseResponse })
   @ApiBadRequestResponse({ type: BaseResponse })
   @ApiNotFoundResponse({ type: BaseResponse })
@@ -87,6 +95,33 @@ export class SubContributorController {
   async deleteUser(@Param('id') id: number) {
     try {
       return await this.subContributorService.deleteSubContributor(id);
+    } catch (error) {
+      throwError(error);
+    }
+  }
+
+  /* @UseGuards(JwtAuthGuard)
+  @ApiOkResponse({ type: BaseResponse })
+  @ApiBadRequestResponse({ type: BaseResponse })
+  @ApiNotFoundResponse({ type: BaseResponse })
+  @Get('/update')
+  async test() {
+    try {
+      return await this.subContributorService.updateSubContributor();
+    } catch (error) {
+      throwError(error);
+    }
+  } */
+
+  @UseGuards(JwtAuthGuard)
+  //@Roles(Role.CUSTOMER, Role.ADMIN)
+  @ApiOkResponse({ type: ProductsResponse })
+  @ApiBadRequestResponse({ type: BaseResponse })
+  @ApiNotFoundResponse({ type: BaseResponse })
+  @Get('getProducts')
+  async getAllProduct(@Req() req) {
+    try {
+      return this.subContributorService.getContributorProducts(req.user.id);
     } catch (error) {
       throwError(error);
     }

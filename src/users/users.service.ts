@@ -1,3 +1,4 @@
+import { ContributorDto } from './../contributor/dtos/contributor.dto';
 import { BaseResponse } from './../core/Dtos/base-response';
 import { NOTFOUND, BADREQUEST } from './../core/utils/constant/exception-types';
 import { CustomException } from './../common/exception/custom-service-exception';
@@ -19,6 +20,8 @@ import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import EncryptionHelperService from '../core/utils/EncryptionHelperService';
 import { AuthDto, CreateUserResponse } from '../core/Dtos/authDtos/auth-dto';
+import { Role } from 'src/core/enums/user-role';
+import { SubContributorDto } from 'src/sub-contributor/dtos/sub-contributor.dto';
 
 @Injectable()
 export class UsersService {
@@ -77,7 +80,25 @@ export class UsersService {
       const savedUser = await this._userRepository.save(user);
       const res = await this.authService.login(savedUser);
       authDto.token = res.access_token;
-      authDto.user = this.mapper.map(savedUser, UserDto, User);
+
+      switch (savedUser.role) {
+        case Role.CONTRIBUTOR:
+          authDto.user = this.mapper.map(savedUser, UserDto, ContributorDto);
+          break;
+
+        case Role.SUB_CONTRIBUTOR:
+          authDto.user = this.mapper.map(savedUser, UserDto, SubContributorDto);
+          break;
+
+        case Role.CUSTOMER:
+          authDto.user = this.mapper.map(savedUser, UserDto, User);
+          break;
+        default:
+          authDto.user = this.mapper.map(savedUser, UserDto, User);
+          break;
+      }
+
+      //authDto.user = this.mapper.map(savedUser, UserDto, User);
       createUserResponse.message = 'user created successfully';
       createUserResponse.data = authDto;
       createUserResponse.status = true;

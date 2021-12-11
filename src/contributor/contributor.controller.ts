@@ -12,6 +12,8 @@ import {
   Param,
   Post,
   Put,
+  Req,
+  UseGuards,
 } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
@@ -23,6 +25,8 @@ import { CreateUserResponse } from 'src/core/Dtos/authDtos/auth-dto';
 import { BaseResponse } from 'src/core/Dtos/base-response';
 import { CreateContributorRequest } from './dtos/createContributorRequest.dto';
 import { throwError } from 'src/common/exception/custom-service-exception';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { ProductsResponse } from 'src/core/Dtos/productDto/product-response.dto';
 
 @ApiTags('contributor')
 @Controller('api/v1/contributor')
@@ -88,6 +92,20 @@ export class ContributorController {
   async deleteUser(@Param('id') id: number) {
     try {
       return await this.contributorService.deleteContributor(id);
+    } catch (error) {
+      throwError(error);
+    }
+  }
+
+  @UseGuards(JwtAuthGuard)
+  //@Roles(Role.CUSTOMER, Role.ADMIN)
+  @ApiOkResponse({ type: ProductsResponse })
+  @ApiBadRequestResponse({ type: BaseResponse })
+  @ApiNotFoundResponse({ type: BaseResponse })
+  @Get('getProducts')
+  async getAllProduct(@Req() req) {
+    try {
+      return this.contributorService.getContributorProducts(req.user.id);
     } catch (error) {
       throwError(error);
     }

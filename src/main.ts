@@ -11,24 +11,12 @@ async function bootstrap() {
     .setDescription('The My Art Stock API description')
     .setVersion('1.0')
     .addTag('My Art Stock')
+    .addBearerAuth()
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('swagger', app, document);
 
-  //const { httpAdapter } = app.get(HttpAdapterHost);
-  //app.useGlobalFilters(new CustomExceptionFilter());
   app.useGlobalPipes(new ValidationPipe());
-  /* app.enableCors({
-    origin: /https?:\/\/(([^/]+\.)?example\.com)$/i,
-    //credentials: true,
-  }); */
-
-  /* app.use((req, res, next) => {
-    res.header('Access-Control-Allow-Origin', '*');
-    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
-    res.header('Access-Control-Allow-Headers', 'Content-Type, Accept');
-    next();
-  }); */
 
   app.enableCors({
     allowedHeaders: '*',
