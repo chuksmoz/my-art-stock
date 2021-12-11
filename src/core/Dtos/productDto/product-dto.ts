@@ -28,6 +28,10 @@ export class ProductDto {
 
   @ApiProperty()
   @AutoMap()
+  userId: number;
+
+  @ApiProperty()
+  @AutoMap()
   mood: string;
 
   @ApiProperty()

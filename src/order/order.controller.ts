@@ -31,10 +31,10 @@ export class OrderController {
   @ApiBearerAuth()
   @Get('list')
   @UseGuards(AuthGuard('jwt'))
-  async orderList(@Req() req): Promise<OrdersResponse> {
+  async orderList(): Promise<OrdersResponse> {
     try {
-      const user = req.user;
-      return await this.orderService.getUserOrders(user.id);
+      //const user = req.user;
+      return await this.orderService.getOrders();
     } catch (error) {
       throwError(error);
     }

@@ -19,6 +19,7 @@ import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { throwError } from 'src/common/exception/custom-service-exception';
 import { BaseResponse } from 'src/core/Dtos/base-response';
 import { ProductsResponse } from 'src/core/Dtos/productDto/product-response.dto';
+import { OrderItemsResponse } from 'src/order/dto/order-response.dto';
 import { CreateSubContributorRequest } from './dtos/create-sub-contributor-request.dto';
 import {
   SubContributorResponse,
@@ -121,7 +122,21 @@ export class SubContributorController {
   @Get('getProducts')
   async getAllProduct(@Req() req) {
     try {
-      return this.subContributorService.getContributorProducts(req.user.id);
+      return this.subContributorService.getSubContributorProducts(req.user.id);
+    } catch (error) {
+      throwError(error);
+    }
+  }
+
+  @UseGuards(JwtAuthGuard)
+  //@Roles(Role.CUSTOMER, Role.ADMIN)
+  @ApiOkResponse({ type: OrderItemsResponse })
+  @ApiBadRequestResponse({ type: BaseResponse })
+  @ApiNotFoundResponse({ type: BaseResponse })
+  @Get('getOrders')
+  async getAllOrderItem(@Req() req) {
+    try {
+      return this.subContributorService.getSubContributorOrders(req.user.id);
     } catch (error) {
       throwError(error);
     }

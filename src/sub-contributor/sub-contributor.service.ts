@@ -23,6 +23,8 @@ import { SubContributorDto } from './dtos/sub-contributor.dto';
 import { UpdateSubContributorRequest } from './dtos/update-contributor-request.dto';
 import { ProductsResponse } from 'src/core/Dtos/productDto/product-response.dto';
 import { ProductService } from 'src/product/product.service';
+import { OrderItemsResponse } from 'src/order/dto/order-response.dto';
+import { OrderService } from 'src/order/order.service';
 
 @Injectable()
 export class SubContributorService {
@@ -37,6 +39,7 @@ export class SubContributorService {
     private readonly _productService: ProductService,
     private readonly _emailService: EmailService,
     @InjectMapper() private readonly mapper: AutoMapper,
+    private readonly _orderService: OrderService,
   ) {}
 
   async createSubContributor(
@@ -190,7 +193,7 @@ export class SubContributorService {
     return response;
   }
 
-  async getContributorProducts(id: number): Promise<ProductsResponse> {
+  async getSubContributorProducts(id: number): Promise<ProductsResponse> {
     try {
       const existingUser = await this._userRepository.findOne(id);
       if (!existingUser) {
@@ -198,6 +201,19 @@ export class SubContributorService {
       }
 
       return await this._productService.getProductsByUserId(id);
+    } catch (error) {
+      throw new Error('system glitch, contact system administrator');
+    }
+  }
+
+  async getSubContributorOrders(id: number): Promise<OrderItemsResponse> {
+    try {
+      const contributor = await this._contributorRepository.findOne(id);
+      if (!contributor) {
+        throw new CustomException(USER_NOT_FOUND, NOTFOUND);
+      }
+
+      return await this._orderService.getOrderItems(id);
     } catch (error) {
       throw new Error('system glitch, contact system administrator');
     }

@@ -1,3 +1,5 @@
+import { OrderService } from 'src/order/order.service';
+import { OrderModule } from './../order/order.module';
 import { EmailModule } from './../email/email.module';
 import { ProductModule } from './../product/product.module';
 import { User } from 'src/core/entities/users';
@@ -15,9 +17,15 @@ import { EmailService } from 'src/email/email.service';
   imports: [
     EmailModule,
     ProductModule,
+    OrderModule,
     TypeOrmModule.forFeature([SubContributor, Contributor, User]),
   ],
-  providers: [SubContributorService, EncryptionHelperService, EmailService],
+  providers: [
+    SubContributorService,
+    EncryptionHelperService,
+    EmailService,
+    OrderService,
+  ],
   controllers: [SubContributorController],
   exports: [SubContributorService],
 })

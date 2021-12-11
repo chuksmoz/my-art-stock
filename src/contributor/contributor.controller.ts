@@ -27,6 +27,7 @@ import { CreateContributorRequest } from './dtos/createContributorRequest.dto';
 import { throwError } from 'src/common/exception/custom-service-exception';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { ProductsResponse } from 'src/core/Dtos/productDto/product-response.dto';
+import { OrderItemsResponse } from 'src/order/dto/order-response.dto';
 
 @ApiTags('contributor')
 @Controller('api/v1/contributor')
@@ -106,6 +107,20 @@ export class ContributorController {
   async getAllProduct(@Req() req) {
     try {
       return this.contributorService.getContributorProducts(req.user.id);
+    } catch (error) {
+      throwError(error);
+    }
+  }
+
+  @UseGuards(JwtAuthGuard)
+  //@Roles(Role.CUSTOMER, Role.ADMIN)
+  @ApiOkResponse({ type: OrderItemsResponse })
+  @ApiBadRequestResponse({ type: BaseResponse })
+  @ApiNotFoundResponse({ type: BaseResponse })
+  @Get('getOrders')
+  async getAllOrderItem(@Req() req) {
+    try {
+      return this.contributorService.getContributorOrders(req.user.id);
     } catch (error) {
       throwError(error);
     }

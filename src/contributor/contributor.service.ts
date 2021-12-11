@@ -22,6 +22,8 @@ import { UpdateContributorRequest } from './dtos/updateContributorRequest.dto';
 import { CreateContributorRequest } from './dtos/createContributorRequest.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ProductService } from 'src/product/product.service';
+import { OrderService } from 'src/order/order.service';
+import { OrderItemsResponse } from 'src/order/dto/order-response.dto';
 
 @Injectable()
 export class ContributorService {
@@ -34,6 +36,7 @@ export class ContributorService {
     private authService: AuthService,
     @InjectMapper() private readonly mapper: AutoMapper,
     private readonly _productService: ProductService,
+    private readonly _orderService: OrderService,
   ) {}
 
   async createContributor(
@@ -174,6 +177,19 @@ export class ContributorService {
       }
 
       return await this._productService.getProductsByUserId(id);
+    } catch (error) {
+      throw new Error('system glitch, contact system administrator');
+    }
+  }
+
+  async getContributorOrders(id: number): Promise<OrderItemsResponse> {
+    try {
+      const contributor = await this._contributorRepository.findOne(id);
+      if (!contributor) {
+        throw new CustomException(USER_NOT_FOUND, NOTFOUND);
+      }
+
+      return await this._orderService.getOrderItems(id);
     } catch (error) {
       throw new Error('system glitch, contact system administrator');
     }

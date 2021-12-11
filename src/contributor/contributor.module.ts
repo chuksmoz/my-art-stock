@@ -1,3 +1,5 @@
+import { OrderService } from 'src/order/order.service';
+import { OrderModule } from './../order/order.module';
 import { CloudinaryModule } from './../cloudinary/cloudinary.module';
 import { ProductModule } from './../product/product.module';
 import { ProductService } from './../product/product.service';
@@ -18,6 +20,7 @@ import { JwtModule } from '@nestjs/jwt';
     TypeOrmModule.forFeature([User, Contributor]),
     ProductModule,
     UsersModule,
+    OrderModule,
     JwtModule.register({
       secret: 'jwtConstants.secret',
       signOptions: { expiresIn: '60s' },
@@ -28,6 +31,7 @@ import { JwtModule } from '@nestjs/jwt';
     EncryptionHelperService,
     AuthService,
     ProductService,
+    OrderService,
   ],
   controllers: [ContributorController],
   exports: [ContributorService],

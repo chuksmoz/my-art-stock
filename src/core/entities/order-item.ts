@@ -28,6 +28,16 @@ export class OrderItem {
   productId: number;
 
   @AutoMap()
+  @IsInt()
+  @Column()
+  userId: number;
+
+  @AutoMap()
+  @IsInt()
+  @Column()
+  contributorId: number;
+
+  @AutoMap()
   @IsNumber()
   @Column()
   price!: number;
