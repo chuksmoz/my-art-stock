@@ -36,7 +36,7 @@ export class UserDto {
   @AutoMap()
   isDeleted: boolean;
   @ApiProperty()
-  @AutoMap()
+  //@AutoMap()
   lastLoginDate: Date;
 }
 

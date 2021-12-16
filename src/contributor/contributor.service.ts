@@ -1,3 +1,5 @@
+import { SubContributorDto } from './../sub-contributor/dtos/sub-contributor.dto';
+import { SubContributor } from './../core/entities/sub-contributor';
 import { ProductsResponse } from './../core/Dtos/productDto/product-response.dto';
 import { ContributorDto } from './dtos/contributor.dto';
 import { Contributor } from './../core/entities/contributor';
@@ -24,6 +26,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { ProductService } from 'src/product/product.service';
 import { OrderService } from 'src/order/order.service';
 import { OrderItemsResponse } from 'src/order/dto/order-response.dto';
+import { SubContributorsResponse } from 'src/sub-contributor/dtos/sub-contributor-response.dto';
+//import { SubContributorsResponse } from 'src/sub-contributor/dtos/sub-contributor-response.dto';
 
 @Injectable()
 export class ContributorService {
@@ -33,6 +37,7 @@ export class ContributorService {
     private readonly _userRepository: Repository<User>,
     @InjectRepository(Contributor)
     private readonly _contributorRepository: Repository<Contributor>,
+    //private readonly _subContributorRepository: Repository<SubContributor>,
     private authService: AuthService,
     @InjectMapper() private readonly mapper: AutoMapper,
     private readonly _productService: ProductService,
@@ -44,69 +49,61 @@ export class ContributorService {
   ): Promise<CreateUserResponse> {
     const createUserResponse = new CreateUserResponse();
     const authDto: AuthDto = new AuthDto();
-    try {
-      if (payload.password !== payload.confirmPassword)
-        throw new CustomException('password does not match', BADREQUEST);
+    if (payload.password !== payload.confirmPassword)
+      throw new CustomException('password does not match', BADREQUEST);
 
-      const existingUser = await this._userRepository.findOne({
-        email: payload.email,
-      });
-      console.log(existingUser);
-      if (existingUser)
-        throw new CustomException('email already exists', BADREQUEST);
-      //const user = this.mapper.map(payload, Users, Createpayload);
-      const user: User = new User();
-      user.email = payload.email;
-      user.password = await this.encryptor.encrypt(payload.password);
-      user.modifiedDate = new Date();
-      user.isDeleted = false;
-      user.isActive = true;
-      user.passwordTries = 0;
-      user.role = Role.CONTRIBUTOR;
-      const savedUser = await this._userRepository.save(user);
+    const existingUser = await this._userRepository.findOne({
+      email: payload.email,
+    });
+    console.log(existingUser);
+    if (existingUser)
+      throw new CustomException('email already exists', BADREQUEST);
+    //const user = this.mapper.map(payload, Users, Createpayload);
+    const user: User = new User();
+    user.email = payload.email;
+    user.password = await this.encryptor.encrypt(payload.password);
+    user.modifiedDate = new Date();
+    user.isDeleted = false;
+    user.isActive = true;
+    user.passwordTries = 0;
+    user.role = Role.CONTRIBUTOR;
+    const savedUser = await this._userRepository.save(user);
 
-      const contributor = new Contributor();
-      contributor.firstName = payload.firstName;
-      contributor.lastName = payload.lastName;
-      contributor.email = payload.email;
-      contributor.phoneNumber = payload.phoneNumber;
-      contributor.countryId = payload.countryId;
-      contributor.stateId = payload.stateId;
-      contributor.city = payload.city;
-      contributor.modifiedDate = new Date();
-      contributor.isDeleted = false;
-      contributor.isActive = true;
+    const contributor = new Contributor();
+    contributor.firstName = payload.firstName;
+    contributor.lastName = payload.lastName;
+    contributor.email = payload.email;
+    contributor.phoneNumber = payload.phoneNumber;
+    contributor.countryId = payload.countryId;
+    contributor.stateId = payload.stateId;
+    contributor.city = payload.city;
+    contributor.modifiedDate = new Date();
+    contributor.isDeleted = false;
+    contributor.isActive = true;
 
-      const savedContributor = await this._contributorRepository.save(
-        contributor,
-      );
+    const savedContributor = await this._contributorRepository.save(
+      contributor,
+    );
 
-      const res = await this.authService.login(savedUser);
-      authDto.token = res.access_token;
-      authDto.user = this.mapper.map(savedContributor, UserDto, ContributorDto);
-      createUserResponse.message = 'Contributor created successfully';
-      createUserResponse.data = authDto;
-      createUserResponse.status = true;
-      return createUserResponse;
-    } catch (error) {
-      throw new Error('system glitch, contact system administrator');
-    }
+    const res = await this.authService.login(savedUser);
+    authDto.token = res.access_token;
+    authDto.user = this.mapper.map(savedContributor, UserDto, Contributor);
+    createUserResponse.message = 'Contributor created successfully';
+    createUserResponse.data = authDto;
+    createUserResponse.status = true;
+    return createUserResponse;
   }
 
   async getContributorById(id: number): Promise<ContributorResponse> {
     const response = new ContributorResponse();
-    try {
-      const contributor = await this._contributorRepository.findOne(id);
-      if (!contributor) {
-        throw new CustomException(USER_NOT_FOUND, NOTFOUND);
-      }
-      response.message = 'Contributor fetched successfully';
-      response.status = true;
-      response.data = this.mapper.map(contributor, ContributorDto, Contributor);
-      return response;
-    } catch (error) {
-      throw new Error('system glitch, contact system administrator');
+    const contributor = await this._contributorRepository.findOne(id);
+    if (!contributor) {
+      throw new CustomException(USER_NOT_FOUND, NOTFOUND);
     }
+    response.message = 'Contributor fetched successfully';
+    response.status = true;
+    response.data = this.mapper.map(contributor, ContributorDto, Contributor);
+    return response;
   }
 
   async getContributors(): Promise<ContributorsResponse> {
@@ -190,6 +187,28 @@ export class ContributorService {
       }
 
       return await this._orderService.getOrderItems(id);
+    } catch (error) {
+      throw new Error('system glitch, contact system administrator');
+    }
+  }
+
+  async getSubContributor(id: number): Promise<SubContributorsResponse> {
+    console.log(`LETS US CHECK ${id}`);
+    const response = new SubContributorsResponse();
+    try {
+      const contributor = await this._contributorRepository.findOne({
+        where: { id },
+        relations: ['subContributors'],
+      });
+      if (!contributor) {
+        throw new CustomException(USER_NOT_FOUND, NOTFOUND);
+      }
+
+      response.data = contributor.subContributors;
+      response.status = true;
+      response.message = 'Sub contributor fetched successfully';
+
+      return response;
     } catch (error) {
       throw new Error('system glitch, contact system administrator');
     }

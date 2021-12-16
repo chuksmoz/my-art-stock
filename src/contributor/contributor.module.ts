@@ -1,6 +1,5 @@
 import { OrderService } from 'src/order/order.service';
 import { OrderModule } from './../order/order.module';
-import { CloudinaryModule } from './../cloudinary/cloudinary.module';
 import { ProductModule } from './../product/product.module';
 import { ProductService } from './../product/product.service';
 import { UsersModule } from './../users/users.module';
@@ -14,10 +13,11 @@ import EncryptionHelperService from 'src/core/utils/EncryptionHelperService';
 import { AuthService } from 'src/auth/auth.service';
 import '../core/profiles/contributor.profile';
 import { JwtModule } from '@nestjs/jwt';
+import { SubContributor } from 'src/core/entities/sub-contributor';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User, Contributor]),
+    TypeOrmModule.forFeature([User, Contributor, SubContributor]),
     ProductModule,
     UsersModule,
     OrderModule,
