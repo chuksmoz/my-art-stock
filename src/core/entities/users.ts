@@ -4,11 +4,9 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Role } from '../enums/user-role';
-import { SubContributor } from './sub-contributor';
 
 @Entity()
 export class User {
@@ -83,10 +81,4 @@ export class User {
   @AutoMap()
   @Column()
   isActive: boolean;
-
-  @OneToMany(() => Contributor, (contributor) => contributor.user)
-  contributors: Contributor[];
-
-  @OneToMany(() => SubContributor, (sunContributor) => sunContributor.user)
-  subContributors: SubContributor[];
 }

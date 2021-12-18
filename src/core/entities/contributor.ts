@@ -7,6 +7,7 @@ import {
   Entity,
   ManyToOne,
   OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Product } from './product';
@@ -16,6 +17,10 @@ export class Contributor {
   @AutoMap()
   @PrimaryGeneratedColumn()
   id: number;
+
+  @AutoMap()
+  @Column({ nullable: true })
+  userId: number;
 
   @AutoMap()
   @Column({ length: 100 })
@@ -65,14 +70,15 @@ export class Contributor {
   @Column()
   isActive: boolean;
 
-  @ManyToOne(() => User, (user) => user.contributors)
-  user: User;
+  /* @OneToOne(() => User, (user) => user.contributor)
+  user: User; */
 
   @OneToMany(
     () => SubContributor,
     (subContributor) => subContributor.contributor,
   )
   subContributors: SubContributor[];
+  /*
   @OneToMany(() => Product, (product) => product.contributor)
-  products: Product[];
+  products: Product[]; */
 }

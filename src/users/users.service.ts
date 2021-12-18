@@ -35,7 +35,11 @@ export class UsersService {
   ) {}
 
   async findUserByEmail(email: string): Promise<User | undefined> {
-    return await this._userRepository.findOne({ email: email });
+    return await this._userRepository
+      .createQueryBuilder()
+      //.innerJoinAndSelect('contributor', 'Contributor')
+      .where('email = :email', { email })
+      .getOne();
   }
   async getUserById(userId: number): Promise<GetSingleUserResponse> {
     const response = new GetSingleUserResponse();
@@ -79,9 +83,9 @@ export class UsersService {
       user.passwordTries = 0;
       const savedUser = await this._userRepository.save(user);
       const res = await this.authService.login(savedUser);
-      authDto.token = res.access_token;
+      //authDto.token = res.token;
 
-      switch (savedUser.role) {
+      /* switch (savedUser.role) {
         case Role.CONTRIBUTOR:
           authDto.user = this.mapper.map(savedUser, UserDto, ContributorDto);
           break;
@@ -96,11 +100,11 @@ export class UsersService {
         default:
           authDto.user = this.mapper.map(savedUser, UserDto, User);
           break;
-      }
+      } */
 
       //authDto.user = this.mapper.map(savedUser, UserDto, User);
       createUserResponse.message = 'user created successfully';
-      createUserResponse.data = authDto;
+      createUserResponse.data = res;
       createUserResponse.status = true;
       return createUserResponse;
     } catch (error) {
@@ -230,6 +234,20 @@ export class UsersService {
 
     response.message = 'User deleted successfully';
     response.status = true;
+    return response;
+  }
+
+  async getContributorUserByUserId(
+    userId: number,
+  ): Promise<GetSingleUserResponse> {
+    const response = new GetSingleUserResponse();
+    const user = await this._userRepository.findOne(userId);
+    if (!user) {
+      throw new CustomException(USER_NOT_FOUND, NOTFOUND);
+    }
+    response.message = 'User fetched successfully';
+    response.status = true;
+    response.data = this.mapper.map(user, UserDto, User);
     return response;
   }
 }

@@ -17,6 +17,7 @@ import {
 } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
+  ApiBearerAuth,
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiTags,
@@ -31,6 +32,7 @@ import { OrderItemsResponse } from 'src/order/dto/order-response.dto';
 import { SubContributorsResponse } from 'src/sub-contributor/dtos/sub-contributor-response.dto';
 
 @ApiTags('contributor')
+@ApiBearerAuth('access-token')
 @Controller('api/v1/contributor')
 export class ContributorController {
   constructor(private readonly contributorService: ContributorService) {}
@@ -49,12 +51,14 @@ export class ContributorController {
     }
   }
 
+  @UseGuards(JwtAuthGuard)
   @ApiOkResponse({ type: ContributorsResponse })
   @ApiBadRequestResponse({ type: BaseResponse })
   @ApiNotFoundResponse({ type: BaseResponse })
   @Get('')
-  async getAllUsers() {
+  async getAllUsers(@Req() req) {
     try {
+      console.log(req);
       return await this.contributorService.getContributors();
     } catch (error) {
       throwError(error);
@@ -100,45 +104,73 @@ export class ContributorController {
   }
 
   @UseGuards(JwtAuthGuard)
-  //@Roles(Role.CUSTOMER, Role.ADMIN)
   @ApiOkResponse({ type: ProductsResponse })
   @ApiBadRequestResponse({ type: BaseResponse })
   @ApiNotFoundResponse({ type: BaseResponse })
-  @Get('getProducts')
+  @Get('/getProducts')
   async getAllProduct(@Req() req) {
     try {
-      return this.contributorService.getContributorProducts(req.user.id);
+      console.log(req);
+      //return this.contributorService.getContributorProducts(req.user.id);
     } catch (error) {
       throwError(error);
     }
   }
 
-  @UseGuards(JwtAuthGuard)
-  //@Roles(Role.CUSTOMER, Role.ADMIN)
+  //@UseGuards(JwtAuthGuard)
   @ApiOkResponse({ type: OrderItemsResponse })
   @ApiBadRequestResponse({ type: BaseResponse })
   @ApiNotFoundResponse({ type: BaseResponse })
-  @Get('getOrders')
-  async getAllOrderItem(@Req() req) {
+  @Get('/getOrders')
+  async getAllOrderItem() {
     try {
-      return this.contributorService.getContributorOrders(req.user.id);
+      //return this.contributorService.getContributorOrders(req.user.id);
     } catch (error) {
       throwError(error);
     }
   }
 
-  @UseGuards(JwtAuthGuard)
+  //@UseGuards(JwtAuthGuard)
   //@Roles(Role.CUSTOMER, Role.ADMIN)
-  @ApiOkResponse({ type: SubContributorsResponse })
+  /* @ApiOkResponse({ type: SubContributorsResponse })
   @ApiBadRequestResponse({ type: BaseResponse })
   @ApiNotFoundResponse({ type: BaseResponse })
   @Get('getSubContributors')
   async getAllSubContributors(@Req() req) {
     try {
+      console.log(req);
       //console.log(req.user.id);
       //return this.contributorService.getSubContributor(req.user.id);
+      return 'Hello world';
     } catch (error) {
-      throwError(error);
+      console.log(error);
+      //throwError(error);
+    }
+  }
+
+  @Get('getSubContributor')
+  async getAllSubContributor() {
+    try {
+      //console.log(req);
+      //console.log(req.user.id);
+      //return this.contributorService.getSubContributor(req.user.id);
+      return 'Hello world';
+    } catch (error) {
+      console.log(error);
+      //throwError(error);
+    }
+  } */
+
+  @Get('test')
+  async test() {
+    try {
+      //console.log(req);
+      //console.log(req.user.id);
+      //return this.contributorService.getSubContributor(req.user.id);
+      return 'Hello world';
+    } catch (error) {
+      console.log(error);
+      //throwError(error);
     }
   }
 }

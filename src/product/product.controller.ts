@@ -14,9 +14,11 @@ import {
   UseGuards,
   UseInterceptors,
   Request,
+  Req,
 } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
+  ApiBearerAuth,
   ApiConsumes,
   ApiNotFoundResponse,
   ApiOkResponse,
@@ -32,26 +34,29 @@ import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { FilesToBodyInterceptor } from 'src/common/decorator/file-helper.decorator';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 
+@ApiBearerAuth('access-token')
 @ApiTags('products')
 @Controller('api/v1/product')
 export class ProductController {
   constructor(private readonly productService: ProductService) {}
 
-  @UseGuards(JwtAuthGuard)
+  //@ApiBearerAuth('access-token')
+  //@UseGuards(JwtAuthGuard)
   @Roles(Role.CUSTOMER, Role.ADMIN)
   @ApiOkResponse({ type: ProductsResponse })
   @ApiBadRequestResponse({ type: BaseResponse })
   @ApiNotFoundResponse({ type: BaseResponse })
   @Get('')
-  async getAllProduct() {
+  async getAllProduct(@Req() req) {
     try {
+      console.log(req);
       return this.productService.getAllProducts();
     } catch (error) {
       throwError(error);
     }
   }
 
-  @UseGuards(JwtAuthGuard)
+  //@UseGuards(JwtAuthGuard)
   @ApiOkResponse({ type: ProductResponse })
   @ApiBadRequestResponse({ type: BaseResponse })
   @ApiNotFoundResponse({ type: BaseResponse })
@@ -147,7 +152,7 @@ export class ProductController {
     }
   }
 
-  @UseGuards(JwtAuthGuard)
+  //@UseGuards(JwtAuthGuard)
   @ApiOkResponse({ type: ProductResponse })
   @ApiBadRequestResponse({ type: BaseResponse })
   @ApiNotFoundResponse({ type: BaseResponse })
@@ -172,6 +177,7 @@ export class ProductController {
       throwError(error);
     }
   }
+
   @ApiConsumes('multipart/form-data')
   //@UseInterceptors(FileInterceptor('files'), FilesToBodyInterceptor)
   @Post('upload')

@@ -1,9 +1,7 @@
-import { SubContributorDto } from './../sub-contributor/dtos/sub-contributor.dto';
-import { SubContributor } from './../core/entities/sub-contributor';
 import { ProductsResponse } from './../core/Dtos/productDto/product-response.dto';
 import { ContributorDto } from './dtos/contributor.dto';
 import { Contributor } from './../core/entities/contributor';
-import { Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { CustomException } from 'src/common/exception/custom-service-exception';
 import { AuthDto, CreateUserResponse } from 'src/core/Dtos/authDtos/auth-dto';
 import { User } from 'src/core/entities/users';
@@ -38,10 +36,11 @@ export class ContributorService {
     @InjectRepository(Contributor)
     private readonly _contributorRepository: Repository<Contributor>,
     //private readonly _subContributorRepository: Repository<SubContributor>,
+    @Inject(forwardRef(() => AuthService))
     private authService: AuthService,
-    @InjectMapper() private readonly mapper: AutoMapper,
-    private readonly _productService: ProductService,
-    private readonly _orderService: OrderService,
+    @InjectMapper()
+    private readonly mapper: AutoMapper /* private readonly _productService: ProductService,
+    private readonly _orderService: OrderService, */,
   ) {}
 
   async createContributor(
@@ -86,7 +85,7 @@ export class ContributorService {
     );
 
     const res = await this.authService.login(savedUser);
-    authDto.token = res.access_token;
+    authDto.token = res.token;
     authDto.user = this.mapper.map(savedContributor, UserDto, Contributor);
     createUserResponse.message = 'Contributor created successfully';
     createUserResponse.data = authDto;
@@ -104,6 +103,13 @@ export class ContributorService {
     response.status = true;
     response.data = this.mapper.map(contributor, ContributorDto, Contributor);
     return response;
+  }
+
+  async getContributorByUserId(userId: number): Promise<Contributor> {
+    //const response = new ContributorResponse();
+    return await this._contributorRepository.findOne({
+      where: { userId },
+    });
   }
 
   async getContributors(): Promise<ContributorsResponse> {
@@ -166,13 +172,19 @@ export class ContributorService {
     return response;
   }
 
-  async getContributorProducts(id: number): Promise<ProductsResponse> {
+  /* async getContributorProducts(id: number): Promise<ProductsResponse> {
     try {
-      const existingUser = await this._userRepository.findOne(id);
+      //const existingUser = await this._userRepository.findOne(id);
+      const existingUser = await this._userRepository
+        .createQueryBuilder()
+        .leftJoinAndSelect('user.contributor', 'contributor')
+        .leftJoinAndSelect('contributor.products', 'product')
+        .where('id= :id', { id })
+        .getOne();
       if (!existingUser) {
         throw new CustomException(USER_NOT_FOUND, NOTFOUND);
       }
-
+      console.log(existingUser);
       return await this._productService.getProductsByUserId(id);
     } catch (error) {
       throw new Error('system glitch, contact system administrator');
@@ -190,13 +202,19 @@ export class ContributorService {
     } catch (error) {
       throw new Error('system glitch, contact system administrator');
     }
-  }
+  } */
 
-  async getSubContributor(id: number): Promise<SubContributorsResponse> {
+  /* async getSubContributor(id: number): Promise<SubContributorsResponse> {
     console.log(`LETS US CHECK ${id}`);
     const response = new SubContributorsResponse();
     try {
-      const contributor = await this._contributorRepository.findOne({
+      const contributor = await this._contributorRepository
+        .createQueryBuilder()
+        .leftJoinAndSelect('contributor.subContributors', 'subContributors')
+        .where('id= :id')
+        .getOne()
+        
+      findOne({
         where: { id },
         relations: ['subContributors'],
       });
@@ -212,5 +230,5 @@ export class ContributorService {
     } catch (error) {
       throw new Error('system glitch, contact system administrator');
     }
-  }
+  } */
 }

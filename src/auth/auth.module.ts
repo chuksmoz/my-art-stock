@@ -1,3 +1,4 @@
+import { SubContributor } from 'src/core/entities/sub-contributor';
 import { JwtStrategy } from './jwt.strategy';
 import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
@@ -8,9 +9,12 @@ import { UsersService } from '../users/users.service';
 import { AuthService } from './auth.service';
 import { LocalStrategy } from './local.strategy';
 import { AuthController } from './auth.controller';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { Contributor } from 'src/core/entities/contributor';
 
 @Module({
   imports: [
+    TypeOrmModule.forFeature([Contributor, SubContributor]),
     UsersModule,
     PassportModule,
     JwtModule.register({
@@ -25,7 +29,7 @@ import { AuthController } from './auth.controller';
     LocalStrategy,
     JwtStrategy,
   ],
-  exports: [AuthService, EncryptionHelperService],
+  exports: [AuthService, EncryptionHelperService, TypeOrmModule],
   controllers: [AuthController],
 })
 export class AuthModule {}

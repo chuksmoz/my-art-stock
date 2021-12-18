@@ -13,14 +13,13 @@ import EncryptionHelperService from 'src/core/utils/EncryptionHelperService';
 import { AuthService } from 'src/auth/auth.service';
 import '../core/profiles/contributor.profile';
 import { JwtModule } from '@nestjs/jwt';
-import { SubContributor } from 'src/core/entities/sub-contributor';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User, Contributor, SubContributor]),
-    ProductModule,
+    TypeOrmModule.forFeature([User, Contributor]),
+    //ProductModule,
     UsersModule,
-    OrderModule,
+    //OrderModule,
     JwtModule.register({
       secret: 'jwtConstants.secret',
       signOptions: { expiresIn: '60s' },
@@ -30,10 +29,10 @@ import { SubContributor } from 'src/core/entities/sub-contributor';
     ContributorService,
     EncryptionHelperService,
     AuthService,
-    ProductService,
-    OrderService,
+    //ProductService,
+    //OrderService,
   ],
   controllers: [ContributorController],
-  exports: [ContributorService],
+  exports: [ContributorService, TypeOrmModule],
 })
 export class ContributorModule {}

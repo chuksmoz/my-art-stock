@@ -83,11 +83,9 @@ export class Product {
   isDeleted: boolean;
 
   @ManyToOne(() => Category, (category) => category.products)
-  /* @OneToOne(() => Category)
-  @JoinColumn() */
   category: Category;
-  @ManyToOne(() => SubContributor, (subContributor) => subContributor.products)
+  /* @ManyToOne(() => SubContributor, (subContributor) => subContributor.products)
   subContributor: SubContributor;
   @ManyToOne(() => Contributor, (contributor) => contributor.products)
-  contributor: Contributor;
+  contributor: Contributor; */
 }

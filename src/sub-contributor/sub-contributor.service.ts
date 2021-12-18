@@ -83,7 +83,7 @@ export class SubContributorService {
       subContributor.isDeleted = false;
       subContributor.isActive = true;
       subContributor.contributor = contributor;
-      subContributor.user = savedUser;
+      subContributor.userId = savedUser.id;
 
       const savedSubContributor = await this._subContributorRepository.save(
         subContributor,
