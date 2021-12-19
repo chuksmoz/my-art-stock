@@ -39,8 +39,8 @@ export class ContributorService {
     @Inject(forwardRef(() => AuthService))
     private authService: AuthService,
     @InjectMapper()
-    private readonly mapper: AutoMapper /* private readonly _productService: ProductService,
-    private readonly _orderService: OrderService, */,
+    private readonly mapper: AutoMapper,
+    private readonly _productService: ProductService /*private readonly _orderService: OrderService, */,
   ) {}
 
   async createContributor(
@@ -172,15 +172,15 @@ export class ContributorService {
     return response;
   }
 
-  /* async getContributorProducts(id: number): Promise<ProductsResponse> {
+  async getContributorProducts(id: number): Promise<ProductsResponse> {
     try {
-      //const existingUser = await this._userRepository.findOne(id);
-      const existingUser = await this._userRepository
+      const existingUser = await this._userRepository.findOne(id);
+      /* const existingUser = await this._userRepository
         .createQueryBuilder()
         .leftJoinAndSelect('user.contributor', 'contributor')
         .leftJoinAndSelect('contributor.products', 'product')
         .where('id= :id', { id })
-        .getOne();
+        .getOne(); */
       if (!existingUser) {
         throw new CustomException(USER_NOT_FOUND, NOTFOUND);
       }
@@ -191,6 +191,7 @@ export class ContributorService {
     }
   }
 
+  /*
   async getContributorOrders(id: number): Promise<OrderItemsResponse> {
     try {
       const contributor = await this._contributorRepository.findOne(id);

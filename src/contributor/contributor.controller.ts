@@ -51,7 +51,7 @@ export class ContributorController {
     }
   }
 
-  @UseGuards(JwtAuthGuard)
+  //@UseGuards(JwtAuthGuard)
   @ApiOkResponse({ type: ContributorsResponse })
   @ApiBadRequestResponse({ type: BaseResponse })
   @ApiNotFoundResponse({ type: BaseResponse })
@@ -111,7 +111,7 @@ export class ContributorController {
   async getAllProduct(@Req() req) {
     try {
       console.log(req);
-      //return this.contributorService.getContributorProducts(req.user.id);
+      return this.contributorService.getContributorProducts(req.user.id);
     } catch (error) {
       throwError(error);
     }

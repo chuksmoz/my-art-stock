@@ -6,6 +6,7 @@ import {
   Request,
   HttpException,
   HttpStatus,
+  Get,
 } from '@nestjs/common';
 import { LocalAuthGuard } from './local-auth.guard';
 import { ApiBody, ApiTags } from '@nestjs/swagger';

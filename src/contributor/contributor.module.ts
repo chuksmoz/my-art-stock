@@ -17,7 +17,7 @@ import { JwtModule } from '@nestjs/jwt';
 @Module({
   imports: [
     TypeOrmModule.forFeature([User, Contributor]),
-    //ProductModule,
+    ProductModule,
     UsersModule,
     //OrderModule,
     JwtModule.register({
@@ -29,7 +29,7 @@ import { JwtModule } from '@nestjs/jwt';
     ContributorService,
     EncryptionHelperService,
     AuthService,
-    //ProductService,
+    ProductService,
     //OrderService,
   ],
   controllers: [ContributorController],
