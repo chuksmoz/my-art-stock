@@ -10,7 +10,7 @@ import {
 } from '@nestjs/common';
 import { LocalAuthGuard } from './local-auth.guard';
 import { ApiBody, ApiTags } from '@nestjs/swagger';
-import { LoginDto } from '../core/Dtos/authDtos/login-dto';
+import { GetAuthUserDto, LoginDto } from '../core/Dtos/authDtos/login-dto';
 import { INVALID_CREDENTIAL } from 'src/core/utils/constant/auth-service.constant';
 
 @ApiTags('auths')
@@ -25,6 +25,26 @@ export class AuthController {
     try {
       const user = req.user;
       return await this.authService.login(user);
+    } catch (error) {
+      if (error.message == INVALID_CREDENTIAL) {
+        throw new HttpException(
+          {
+            status: false,
+            message: error.message,
+          },
+          HttpStatus.UNAUTHORIZED,
+        );
+      }
+    }
+  }
+
+  @ApiBody({ type: GetAuthUserDto })
+  @UseGuards(LocalAuthGuard)
+  @Post('/getAuthUser')
+  async getAuth(@Request() req) {
+    try {
+      const auth_token = req.token;
+      return await this.authService.refresh(auth_token);
     } catch (error) {
       if (error.message == INVALID_CREDENTIAL) {
         throw new HttpException(

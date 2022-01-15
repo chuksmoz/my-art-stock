@@ -19,7 +19,7 @@ import { Contributor } from 'src/core/entities/contributor';
     PassportModule,
     JwtModule.register({
       secret: 'jwtConstants.secret',
-      signOptions: { expiresIn: '60s' },
+      signOptions: { expiresIn: '60000s' },
     }),
   ],
   providers: [
