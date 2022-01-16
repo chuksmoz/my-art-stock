@@ -37,6 +37,47 @@ import { SubContributorsResponse } from 'src/sub-contributor/dtos/sub-contributo
 export class ContributorController {
   constructor(private readonly contributorService: ContributorService) {}
 
+  @UseGuards(JwtAuthGuard)
+  @ApiOkResponse({ type: ProductsResponse })
+  @ApiBadRequestResponse({ type: BaseResponse })
+  @ApiNotFoundResponse({ type: BaseResponse })
+  @Get('/getProducts')
+  async getAllProduct(@Req() req) {
+    try {
+      console.log(req);
+      return this.contributorService.getContributorProducts(req.user.id);
+    } catch (error) {
+      throwError(error);
+    }
+  }
+
+  //@UseGuards(JwtAuthGuard)
+  @ApiOkResponse({ type: OrderItemsResponse })
+  @ApiBadRequestResponse({ type: BaseResponse })
+  @ApiNotFoundResponse({ type: BaseResponse })
+  @Get('/getOrders')
+  async getAllOrderItem() {
+    try {
+      //return this.contributorService.getContributorOrders(req.user.id);
+    } catch (error) {
+      throwError(error);
+    }
+  }
+
+  @ApiOkResponse({ type: SubContributorsResponse })
+  @ApiBadRequestResponse({ type: BaseResponse })
+  @ApiNotFoundResponse({ type: BaseResponse })
+  @Get('getSubContributors')
+  async getAllSubContributors(@Req() req) {
+    try {
+      //console.log(req.user.id);
+      return this.contributorService.getSubContributor(req.user.id);
+    } catch (error) {
+      //console.log(error);
+      throwError(error);
+    }
+  }
+
   @ApiOkResponse({ type: CreateUserResponse })
   @ApiBadRequestResponse({ type: BaseResponse })
   @ApiNotFoundResponse({ type: BaseResponse })
@@ -103,28 +144,14 @@ export class ContributorController {
     }
   }
 
-  @UseGuards(JwtAuthGuard)
-  @ApiOkResponse({ type: ProductsResponse })
+  @ApiOkResponse({ type: ContributorsResponse })
   @ApiBadRequestResponse({ type: BaseResponse })
   @ApiNotFoundResponse({ type: BaseResponse })
-  @Get('/getProducts')
-  async getAllProduct(@Req() req) {
+  @Get('/one')
+  async getAl(@Req() req) {
     try {
       console.log(req);
-      return this.contributorService.getContributorProducts(req.user.id);
-    } catch (error) {
-      throwError(error);
-    }
-  }
-
-  //@UseGuards(JwtAuthGuard)
-  @ApiOkResponse({ type: OrderItemsResponse })
-  @ApiBadRequestResponse({ type: BaseResponse })
-  @ApiNotFoundResponse({ type: BaseResponse })
-  @Get('/getOrders')
-  async getAllOrderItem() {
-    try {
-      //return this.contributorService.getContributorOrders(req.user.id);
+      return await this.contributorService.getContributors();
     } catch (error) {
       throwError(error);
     }
@@ -132,21 +159,7 @@ export class ContributorController {
 
   //@UseGuards(JwtAuthGuard)
   //@Roles(Role.CUSTOMER, Role.ADMIN)
-  /* @ApiOkResponse({ type: SubContributorsResponse })
-  @ApiBadRequestResponse({ type: BaseResponse })
-  @ApiNotFoundResponse({ type: BaseResponse })
-  @Get('getSubContributors')
-  async getAllSubContributors(@Req() req) {
-    try {
-      console.log(req);
-      //console.log(req.user.id);
-      //return this.contributorService.getSubContributor(req.user.id);
-      return 'Hello world';
-    } catch (error) {
-      console.log(error);
-      //throwError(error);
-    }
-  }
+  /* 
 
   @Get('getSubContributor')
   async getAllSubContributor() {
@@ -160,17 +173,4 @@ export class ContributorController {
       //throwError(error);
     }
   } */
-
-  @Get('test')
-  async test() {
-    try {
-      //console.log(req);
-      //console.log(req.user.id);
-      //return this.contributorService.getSubContributor(req.user.id);
-      return 'Hello world';
-    } catch (error) {
-      console.log(error);
-      //throwError(error);
-    }
-  }
 }

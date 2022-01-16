@@ -33,10 +33,38 @@ import { SubContributorService } from './sub-contributor.service';
 export class SubContributorController {
   constructor(private readonly subContributorService: SubContributorService) {}
 
+  @ApiOkResponse({ type: ProductsResponse })
+  @ApiBadRequestResponse({ type: BaseResponse })
+  @ApiNotFoundResponse({ type: BaseResponse })
+  @Get('/getProducts')
+  async getAllProduct(@Req() req) {
+    try {
+      return this.subContributorService.getSubContributorProducts(
+        4 /* req.user.id */,
+      );
+    } catch (error) {
+      throwError(error);
+    }
+  }
+
+  @UseGuards(JwtAuthGuard)
+  //@Roles(Role.CUSTOMER, Role.ADMIN)
+  @ApiOkResponse({ type: OrderItemsResponse })
+  @ApiBadRequestResponse({ type: BaseResponse })
+  @ApiNotFoundResponse({ type: BaseResponse })
+  @Get('/getOrders')
+  async getAllOrderItem(@Req() req) {
+    try {
+      return this.subContributorService.getSubContributorOrders(req.user.id);
+    } catch (error) {
+      throwError(error);
+    }
+  }
+
   @ApiOkResponse({ type: SubContributorResponse })
   @ApiBadRequestResponse({ type: BaseResponse })
   @ApiNotFoundResponse({ type: BaseResponse })
-  @Post('')
+  @Post('/')
   async createContributor(
     @Body() request: CreateSubContributorRequest,
   ): Promise<SubContributorResponse> {
@@ -47,11 +75,11 @@ export class SubContributorController {
     }
   }
 
-  @UseGuards(JwtAuthGuard)
+  //@UseGuards(JwtAuthGuard)
   @ApiOkResponse({ type: SubContributorsResponse })
   @ApiBadRequestResponse({ type: BaseResponse })
   @ApiNotFoundResponse({ type: BaseResponse })
-  @Get('')
+  @Get('/')
   async getAllSubContributors() {
     try {
       return await this.subContributorService.getSubContributors();
@@ -63,7 +91,7 @@ export class SubContributorController {
   @ApiOkResponse({ type: SubContributorResponse })
   @ApiBadRequestResponse({ type: BaseResponse })
   @ApiNotFoundResponse({ type: BaseResponse })
-  @Get(':id')
+  @Get('/:id')
   async getUserById(@Param('id') id: number) {
     try {
       return await this.subContributorService.getSubContributorById(id);
@@ -76,7 +104,7 @@ export class SubContributorController {
   @ApiOkResponse({ type: SubContributorResponse })
   @ApiBadRequestResponse({ type: BaseResponse })
   @ApiNotFoundResponse({ type: BaseResponse })
-  @Put(':id')
+  @Put('/:id')
   async updateUser(
     @Param('id') id: number,
     @Body() payload: UpdateSubContributorRequest,
@@ -92,7 +120,7 @@ export class SubContributorController {
   @ApiOkResponse({ type: BaseResponse })
   @ApiBadRequestResponse({ type: BaseResponse })
   @ApiNotFoundResponse({ type: BaseResponse })
-  @Delete(':id')
+  @Delete('/:id')
   async deleteUser(@Param('id') id: number) {
     try {
       return await this.subContributorService.deleteSubContributor(id);
@@ -114,27 +142,11 @@ export class SubContributorController {
     }
   } */
 
-  @UseGuards(JwtAuthGuard)
+  //@UseGuards(JwtAuthGuard)
   //@Roles(Role.CUSTOMER, Role.ADMIN)
-  @ApiOkResponse({ type: ProductsResponse })
-  @ApiBadRequestResponse({ type: BaseResponse })
-  @ApiNotFoundResponse({ type: BaseResponse })
-  @Get('getProducts')
-  async getAllProduct(@Req() req) {
-    try {
-      return this.subContributorService.getSubContributorProducts(req.user.id);
-    } catch (error) {
-      throwError(error);
-    }
-  }
 
-  @UseGuards(JwtAuthGuard)
-  //@Roles(Role.CUSTOMER, Role.ADMIN)
-  @ApiOkResponse({ type: OrderItemsResponse })
-  @ApiBadRequestResponse({ type: BaseResponse })
-  @ApiNotFoundResponse({ type: BaseResponse })
-  @Get('getOrders')
-  async getAllOrderItem(@Req() req) {
+  @Get('/all')
+  async getAllOrder(@Req() req) {
     try {
       return this.subContributorService.getSubContributorOrders(req.user.id);
     } catch (error) {

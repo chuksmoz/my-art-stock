@@ -15,7 +15,7 @@ import { Contributor } from 'src/core/entities/contributor';
     TypeOrmModule.forFeature([User, Contributor, SubContributor]),
     JwtModule.register({
       secret: 'jwtConstants.secret',
-      signOptions: { expiresIn: '60s' },
+      signOptions: { expiresIn: process.env.JWT_EXPIRY_TIME },
     }),
   ],
   providers: [UsersService, EncryptionHelperService, AuthService],

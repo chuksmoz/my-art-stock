@@ -205,7 +205,7 @@ export class ContributorService {
     }
   } */
 
-  /* async getSubContributor(id: number): Promise<SubContributorsResponse> {
+  async getSubContributor(id: number): Promise<SubContributorsResponse> {
     console.log(`LETS US CHECK ${id}`);
     const response = new SubContributorsResponse();
     try {
@@ -213,12 +213,12 @@ export class ContributorService {
         .createQueryBuilder()
         .leftJoinAndSelect('contributor.subContributors', 'subContributors')
         .where('id= :id')
-        .getOne()
-        
-      findOne({
+        .getOne();
+
+      /* findOne({
         where: { id },
         relations: ['subContributors'],
-      });
+      }); */
       if (!contributor) {
         throw new CustomException(USER_NOT_FOUND, NOTFOUND);
       }
@@ -231,5 +231,5 @@ export class ContributorService {
     } catch (error) {
       throw new Error('system glitch, contact system administrator');
     }
-  } */
+  }
 }
