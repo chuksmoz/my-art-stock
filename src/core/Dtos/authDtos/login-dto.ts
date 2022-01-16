@@ -10,3 +10,9 @@ export class LoginDto {
   @ApiProperty()
   password: string;
 }
+
+export class GetAuthUserDto {
+  @ApiProperty()
+  @IsNotEmpty()
+  token: string;
+}

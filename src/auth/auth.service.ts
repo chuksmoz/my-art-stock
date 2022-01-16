@@ -1,6 +1,6 @@
 import { User } from './../core/entities/users';
 import { UserDto } from 'src/core/Dtos/userDtos/user-dto';
-import { BADREQUEST } from './../core/utils/constant/exception-types';
+import { BADREQUEST, UNAUTHORIZED } from './../core/utils/constant/exception-types';
 import { CustomException } from './../common/exception/custom-service-exception';
 import {
   INVALID_CREDENTIAL,
@@ -86,7 +86,23 @@ export class AuthService {
     return {
       token: this.jwtService.sign(payload),
       user: userDto,
-      expires: 60,
+      expires: 60000,
     };
   }
+
+
+  async refresh(token) {
+    let userDto = new UserDto();
+
+      let payload = this.jwtService.verify(token);
+
+      const authUser: User = await this.usersService.findUserByEmail(payload.email);
+
+      if (!authUser) throw new CustomException("Invalid Authentication Token", UNAUTHORIZED);
+
+      // userDto = this.mapper.map(authUser, )
+
+      return this.login(authUser);
+  }
 }
+
