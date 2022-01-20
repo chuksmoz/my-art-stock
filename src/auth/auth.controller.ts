@@ -40,7 +40,7 @@ export class AuthController {
 
   @ApiBody({ type: GetAuthUserDto })
   @UseGuards(LocalAuthGuard)
-  @Post('/getAuthUser')
+  @Post('')
   async getAuth(@Request() req) {
     try {
       const auth_token = req.token;
