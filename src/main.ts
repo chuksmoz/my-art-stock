@@ -34,6 +34,7 @@ async function bootstrap() {
     origin: '*',
   });
   app.useLogger(app.get(WINSTON_MODULE_NEST_PROVIDER));
-  await app.listen(process.env.PORT || 3000);
+  const port = process.env.PORT || 3000;
+  await app.listen(port, ()=>{console.log(`Running on port ${port}`)});
 }
 bootstrap();
