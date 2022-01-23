@@ -4,8 +4,16 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common';
 import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
 
+
+const fs = require("fs");
+
+let key = fs.readFileSync("../selfsigned.key")
+let cert = fs.readFileSync("../selfsigned.crt")
+
+let httpsOptions = {key: key, cert: cert}
+
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, { cors: true });
+  const app = await NestFactory.create(AppModule, { httpsOptions, cors: true });
   const config = new DocumentBuilder()
     .setTitle('The My Art Stock')
     .setDescription('The My Art Stock API description')
