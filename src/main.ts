@@ -8,8 +8,8 @@ import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
 const fs = require("fs");
 const path = require("path")
 
-let key = fs.readFileSync(path.join(__dirname, "/sec/selfsigned.key"));
-let cert = fs.readFileSync(path.join(__dirname, "/sec/selfsigned.crt"));
+let key = fs.readFileSync(path.join(__dirname, "../sec/selfsigned.key"));
+let cert = fs.readFileSync(path.join(__dirname, "../sec/selfsigned.crt"));
 
 let httpsOptions = {key: key, cert: cert}
 
