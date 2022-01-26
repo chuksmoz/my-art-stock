@@ -6,10 +6,9 @@ import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
 
 
 const fs = require("fs");
-const path = require("path")
 
-let key = fs.readFileSync(path.join(__dirname, "../sec/selfsigned.key"));
-let cert = fs.readFileSync(path.join(__dirname, "../sec/selfsigned.crt"));
+let key = fs.readFileSync("/etc/letsencrypt/live/draiba.com/privkey.pem");
+let cert = fs.readFileSync("/etc/letsencrypt/live/draiba.com/fullchain.pem");
 
 let httpsOptions = {key: key, cert: cert}
 
@@ -47,3 +46,4 @@ async function bootstrap() {
   await app.listen(port, ()=>{console.log(`Running on port ${port}`)});
 }
 bootstrap();
+
