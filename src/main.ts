@@ -5,15 +5,16 @@ import { ValidationPipe } from '@nestjs/common';
 import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
 
 
-const fs = require("fs");
+// const fs = require("fs");
+// const https = require("https");
 
-let key = fs.readFileSync("/etc/letsencrypt/live/draiba.com/privkey.pem");
-let cert = fs.readFileSync("/etc/letsencrypt/live/draiba.com/fullchain.pem");
+// let key = fs.readFileSync("/etc/letsencrypt/live/draiba.com/privkey.pem");
+// let cert = fs.readFileSync("/etc/letsencrypt/live/draiba.com/fullchain.pem");
 
-let httpsOptions = {key: key, cert: cert}
+// let httpsOptions = {key: key, cert: cert}
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, { httpsOptions, cors: true });
+  const app = await NestFactory.create(AppModule, {cors: true });
   const config = new DocumentBuilder()
     .setTitle('The My Art Stock')
     .setDescription('The My Art Stock API description')
